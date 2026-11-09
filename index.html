@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>18-Day Holiday Scavenger & Activity Advent Calendar</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Cinzel Decorative/Playfair for festive flair -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@300;400;500;600;700&family=Mountains+of+Christmas:wght@700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            festive: {
+              pine: '#0f291e',
+              darkgreen: '#143828',
+              emerald: '#1b4d36',
+              crimson: '#8b1e2a',
+              berry: '#a82c35',
+              gold: '#e6b85c',
+              lightgold: '#f9e29d',
+              cream: '#fdfbf7',
+              snow: '#f4f7f6',
+              charcoal: '#22252a'
+            }
+          },
+          fontFamily: {
+            festive: ['"Cinzel"', 'serif'],
+            holiday: ['"Mountains of Christmas"', 'cursive'],
+            sans: ['"Inter"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Snow particles styling */
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      color: rgba(255, 255, 255, 0.7);
+      user-select: none;
+      pointer-events: none;
+      z-index: 10;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to {
+        transform: translateY(105vh) rotate(360deg);
+      }
+    }
+
+    /* Shimmer animation for ready blocks */
+    @keyframes goldGlow {
+      0%, 100% {
+        box-shadow: 0 4px 15px rgba(230, 184, 92, 0.25), inset 0 0 10px rgba(230, 184, 92, 0.1);
+      }
+      50% {
+        box-shadow: 0 8px 25px rgba(230, 184, 92, 0.55), inset 0 0 16px rgba(230, 184, 92, 0.3);
+      }
+    }
+    .ready-glow {
+      animation: goldGlow 3s infinite ease-in-out;
+    }
+
+    /* Modal transition */
+    .modal-enter {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    .modal-enter-active {
+      opacity: 1;
+      transform: scale(1);
+      transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f291e;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2b5d44;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #e6b85c;
+    }
+
+    /* PRINT SPECIFIC STYLES FOR PDF EXPORT */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #1a1a1a !important;
+        font-size: 10pt;
+      }
+      .no-print, header, footer, #dayModal, #toast, .snowflake, #revealCelebrationSection, #demoToggleContainer {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      #mainContainer {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+      }
+      .print-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 12px !important;
+        page-break-inside: auto;
+      }
+      .print-card {
+        border: 1.5px solid #bdc3c7 !important;
+        background: #fafafa !important;
+        color: #111 !important;
+        box-shadow: none !important;
+        page-break-inside: avoid !important;
+        border-radius: 8px !important;
+        padding: 8px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        min-height: 240px !important;
+      }
+      .print-img {
+        max-height: 120px !important;
+        object-fit: cover !important;
+        width: 100% !important;
+        border-radius: 4px !important;
+        margin-top: 4px !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+    }
+    @media screen {
+      .print-only {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-[#0b1c15] via-[#102b20] to-[#0a1812] text-festive-cream font-sans min-h-screen relative selection:bg-festive-gold selection:text-festive-pine">
+
+  <!-- Interactive Snow Layer Container -->
+  <div id="snowContainer" class="pointer-events-none fixed inset-0 overflow-hidden z-0"></div>
+
+  <!-- Main Application Wrapper -->
+  <div id="mainContainer" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex flex-col min-h-screen">
+
+    <!-- Header Section -->
+    <header class="mb-8 text-center relative border-b border-festive-gold/20 pb-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
+        <!-- Badge / Small tagline -->
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-festive-emerald/60 border border-festive-gold/40 text-festive-gold text-xs sm:text-sm font-semibold tracking-wide shadow-sm">
+          <i class="fa-solid fa-snowflake animate-spin" style="animation-duration: 9s;"></i>
+          <span>18 DAYS OF JOY & DISCOVERY</span>
+        </div>
+
+        <!-- Controls: Demo Switch & Print Button -->
+        <div class="flex items-center flex-wrap gap-2 sm:gap-3 no-print">
+          <!-- Unlock Mode Switch -->
+          <div id="demoToggleContainer" class="flex items-center bg-festive-pine/80 border border-festive-gold/30 rounded-xl px-3 py-1.5 shadow-md">
+            <span class="text-xs mr-2 text-stone-300 font-medium hidden sm:inline"><i class="fa-solid fa-wand-magic-sparkles text-festive-gold mr-1"></i>Unlock All Days</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="demoModeToggle" class="sr-only peer" />
+              <div class="w-9 h-5 bg-stone-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-festive-gold"></div>
+            </label>
+          </div>
+
+          <!-- Print / PDF Trigger Button -->
+          <button id="btnPrint" onclick="triggerPrintCalendar()" class="inline-flex items-center gap-2 bg-gradient-to-r from-festive-crimson to-festive-berry hover:from-red-700 hover:to-festive-crimson text-white px-4 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-festive-crimson/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 text-sm border border-festive-gold/30">
+            <i class="fa-solid fa-file-pdf text-festive-lightgold"></i>
+            <span>Print Calendar (PDF)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Titles -->
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-bold font-festive tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-festive-lightgold to-amber-200 drop-shadow-md">
+        18-Day Holiday Scavenger Hunt
+      </h1>
+      <p class="mt-3 text-stone-300 text-sm sm:text-base max-w-2xl mx-auto font-light leading-relaxed">
+        Unlock one daily scavenger item or cheerful activity each day. Snap and upload photo proof of each discovery—culminating in the <span class="text-festive-gold font-medium">Grand Reveal Showcase on Day 18</span>!
+      </p>
+
+      <!-- Progress Section -->
+      <div class="mt-6 max-w-xl mx-auto bg-festive-pine/90 p-4 rounded-2xl border border-festive-gold/30 shadow-xl backdrop-blur-md">
+        <div class="flex items-center justify-between text-xs sm:text-sm mb-2 font-medium">
+          <span class="flex items-center gap-1.5 text-stone-200">
+            <i class="fa-solid fa-trophy text-festive-gold"></i>
+            Challenge Progress
+          </span>
+          <span id="progressText" class="text-festive-lightgold font-bold font-mono text-sm sm:text-base">0 / 18 Completed</span>
+        </div>
+        <div class="w-full bg-stone-900/80 rounded-full h-3.5 p-0.5 border border-festive-gold/20 overflow-hidden">
+          <div id="progressBar" class="bg-gradient-to-r from-emerald-500 via-festive-gold to-amber-400 h-full rounded-full transition-all duration-700 ease-out shadow-sm" style="width: 0%"></div>
+        </div>
+        <div class="mt-2.5 flex items-center justify-between text-xs text-stone-400">
+          <span>Day 1 Kickoff</span>
+          <span id="statusBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-festive-emerald/50 text-emerald-300 border border-emerald-500/30">
+            0% Complete
+          </span>
+          <span class="text-festive-gold font-semibold">Day 18 Grand Reveal ⭐</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- PRINT HEADER ONLY (Seen when saving/printing as PDF) -->
+    <div class="print-only mb-6 text-center border-b pb-4">
+      <h1 class="text-2xl font-bold font-serif text-gray-900">My 18-Day Advent Calendar Journey</h1>
+      <p class="text-xs text-gray-600 mt-1">Completed Scavenger Hunt Proofs & Memories | Grand Reveal Edition</p>
+      <div id="printCompletionStats" class="text-xs font-semibold text-emerald-800 mt-1">18 of 18 Days Logged</div>
+    </div>
+
+    <!-- Advent Calendar 18-Block Grid -->
+    <main class="flex-grow">
+      <div id="calendarGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-5 print-grid">
+        <!-- 18 Cards will be injected dynamically -->
+      </div>
+
+      <!-- Day 18 Grand Reveal Celebration Section (Revealed when 18 completed or clicked) -->
+      <section id="revealCelebrationSection" class="hidden mt-12 bg-gradient-to-b from-festive-pine/90 to-festive-emerald/60 border-2 border-festive-gold p-6 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden backdrop-blur-md">
+        <div class="absolute -top-12 -right-12 w-48 h-48 bg-festive-gold/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="text-center max-w-3xl mx-auto">
+          <div class="inline-block p-3 rounded-full bg-festive-gold/20 text-festive-gold text-2xl mb-3 border border-festive-gold/50 shadow-inner">
+            <i class="fa-solid fa-crown animate-bounce"></i>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-bold font-festive text-festive-lightgold">
+            🎉 The Grand Day 18 Reveal Celebration! 🎉
+          </h2>
+          <p class="text-stone-200 mt-2 text-sm sm:text-base font-light">
+            Congratulations! You've documented all 18 joyful milestones, scavenger finds, and holiday traditions. Your holiday showcase is now complete and ready to print, share, or cherish!
+          </p>
+          <div class="mt-6 flex flex-wrap justify-center gap-4">
+            <button onclick="triggerConfetti()" class="px-5 py-2.5 rounded-xl bg-festive-gold hover:bg-amber-400 text-festive-pine font-bold shadow-lg transition-transform hover:scale-105 active:scale-95 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-sparkles"></i> Shoot Confetti Again!
+            </button>
+            <button onclick="triggerPrintCalendar()" class="px-5 py-2.5 rounded-xl bg-stone-900/80 hover:bg-black text-festive-cream font-semibold border border-festive-gold/40 shadow-lg text-sm flex items-center gap-2">
+              <i class="fa-solid fa-download"></i> Save as PDF / Print Keepsake
+            </button>
+          </div>
+        </div>
+
+        <!-- Collage Preview of all uploaded items -->
+        <div class="mt-8 pt-8 border-t border-festive-gold/20">
+          <h3 class="text-center text-lg font-festive text-festive-gold mb-4">Your 18-Day Visual Memory Reel</h3>
+          <div id="collageContainer" class="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
+            <!-- Thumbnails filled by JS -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-xs text-stone-400 border-t border-festive-emerald/40 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 no-print">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-holly-berry text-festive-berry"></i>
+        <span>Festive Holiday Scavenger Calendar</span>
+      </div>
+      <div>
+        <span>All photos stored safely in your browser storage.</span>
+      </div>
+      <button onclick="resetAllData()" class="text-xs text-stone-400 hover:text-red-400 transition-colors underline decoration-dotted">
+        Reset Progress
+      </button>
+    </footer>
+  </div>
+
+  <!-- Day Activity & Photo Modal Popup -->
+  <div id="dayModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+    <div id="modalBox" class="bg-gradient-to-b from-[#143828] to-[#0f291e] border-2 border-festive-gold/70 rounded-3xl shadow-2xl max-w-lg w-full p-5 sm:p-7 relative text-festive-cream transform scale-95 transition-transform duration-300 overflow-y-auto max-h-[92vh]">
+      
+      <!-- Close Button -->
+      <button onclick="closeDayModal()" class="absolute top-4 right-4 text-stone-300 hover:text-festive-gold bg-stone-900/50 hover:bg-stone-900/80 w-8 h-8 rounded-full flex items-center justify-center transition-colors">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <!-- Modal Day Badge -->
+      <div class="flex items-center gap-3 mb-4">
+        <span id="modalDayNumberBadge" class="bg-gradient-to-br from-festive-gold to-amber-600 text-festive-pine font-black text-lg px-3 py-1 rounded-xl shadow-md font-mono">
+          Day 01
+        </span>
+        <div>
+          <span id="modalDayStatus" class="text-xs font-semibold tracking-wider uppercase text-emerald-400 flex items-center gap-1">
+            <i class="fa-solid fa-lock-open text-[10px]"></i> Unlocked Activity
+          </span>
+          <p id="modalCategory" class="text-xs text-festive-lightgold/80 font-medium">Holiday Scavenger Hunt</p>
+        </div>
+      </div>
+
+      <!-- Activity Title & Description -->
+      <div class="mb-5 bg-stone-900/60 p-4 rounded-2xl border border-festive-gold/30">
+        <h3 id="modalTaskTitle" class="text-lg sm:text-xl font-bold font-festive text-festive-lightgold mb-1">
+          Activity Title
+        </h3>
+        <p id="modalTaskDesc" class="text-stone-300 text-sm leading-relaxed">
+          Task instructions appear here.
+        </p>
+      </div>
+
+      <!-- Photo Proof Upload Box -->
+      <div class="mb-5">
+        <label class="block text-xs font-bold uppercase tracking-wider text-festive-gold mb-2 flex items-center justify-between">
+          <span><i class="fa-solid fa-camera mr-1"></i> Add Photo Proof</span>
+          <span class="text-[11px] text-stone-300 font-normal">PNG, JPG, or WEBP</span>
+        </label>
+
+        <!-- Drop/Select Area (shown when no photo) -->
+        <div id="dropZone" class="border-2 border-dashed border-festive-gold/40 hover:border-festive-gold rounded-2xl p-5 text-center cursor-pointer transition-all bg-stone-900/40 hover:bg-festive-emerald/20 group">
+          <input type="file" id="photoFileInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)" />
+          <div class="flex flex-col items-center justify-center pointer-events-none">
+            <div class="w-12 h-12 rounded-full bg-festive-gold/10 group-hover:bg-festive-gold/20 flex items-center justify-center text-festive-gold text-xl mb-2 transition-transform group-hover:scale-110">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <p class="text-sm font-semibold text-stone-200">Tap to browse or drop photo proof</p>
+            <p class="text-xs text-stone-400 mt-1">Proof that you found the item or did the event</p>
+          </div>
+        </div>
+
+        <!-- Photo Preview Area (shown when photo is present) -->
+        <div id="photoPreviewContainer" class="hidden relative rounded-2xl overflow-hidden border border-festive-gold/60 shadow-lg bg-black">
+          <img id="photoPreviewImg" src="" alt="Proof Preview" class="w-full h-48 sm:h-56 object-cover" />
+          <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-3 flex justify-between items-center">
+            <span class="text-xs text-emerald-400 font-medium flex items-center gap-1">
+              <i class="fa-solid fa-circle-check"></i> Photo Proof Ready
+            </span>
+            <div class="flex gap-2">
+              <button type="button" onclick="document.getElementById('photoFileInput').click()" class="text-xs bg-stone-800 hover:bg-stone-700 text-festive-lightgold px-2.5 py-1 rounded-lg border border-festive-gold/30">
+                Replace
+              </button>
+              <button type="button" onclick="removePhotoProof()" class="text-xs bg-red-900/80 hover:bg-red-800 text-white px-2.5 py-1 rounded-lg border border-red-500/40">
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Optional User Note / Memory -->
+      <div class="mb-6">
+        <label for="userNoteInput" class="block text-xs font-bold uppercase tracking-wider text-stone-300 mb-1.5 flex items-center gap-1.5">
+          <i class="fa-solid fa-feather"></i> Memory / Note (Optional)
+        </label>
+        <textarea id="userNoteInput" rows="2" placeholder="Write a quick memory, timestamp, or who was with you..." class="w-full bg-stone-900/70 border border-stone-700 focus:border-festive-gold rounded-xl px-3 py-2 text-sm text-stone-200 placeholder-stone-500 focus:outline-none transition-colors resize-none"></textarea>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-end gap-3 pt-2 border-t border-stone-800">
+        <button type="button" onclick="closeDayModal()" class="px-4 py-2.5 rounded-xl border border-stone-600 text-stone-300 hover:bg-stone-800 text-sm font-semibold transition-colors">
+          Cancel
+        </button>
+        <button type="button" onclick="saveDayEntry()" id="btnSaveModal" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-festive-gold to-amber-500 hover:from-amber-400 hover:to-amber-500 text-festive-pine text-sm font-bold shadow-lg transition-transform hover:scale-102 active:scale-98 flex items-center gap-2">
+          <i class="fa-solid fa-check"></i>
+          <span>Save & Mark Complete</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-stone-900/95 border border-festive-gold text-festive-cream px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+    <div id="toastIcon" class="text-festive-gold text-lg">
+      <i class="fa-solid fa-circle-check"></i>
+    </div>
+    <div class="text-xs sm:text-sm font-medium" id="toastMessage">Entry saved!</div>
+  </div>
+
+  <!-- Script Logic -->
+  <script>
+    /* ==========================================================================
+       18 DAYS SCAVENGER & ACTIVITY DATA DEFINITION
+       ========================================================================== */
+    const ADVENT_TASKS = [
+      {
+        day: 1,
+        title: "Cozy Holiday Socks",
+        category: "Scavenger Find",
+        desc: "Find and put on the coziest, warmest, or most festive pair of holiday socks you own! Take a photo of your cozy feet.",
+        icon: "fa-socks"
+      },
+      {
+        day: 2,
+        title: "Warm Festive Treat",
+        category: "Holiday Activity",
+        desc: "Bake, buy, or enjoy a warm holiday treat (cinnamon roll, gingerbread, fresh cookie, or pastry). Capture a photo before the first bite!",
+        icon: "fa-cookie-bite"
+      },
+      {
+        day: 3,
+        title: "Find a Red Ornament",
+        category: "Scavenger Find",
+        desc: "Search around your home or neighborhood tree for a shiny or handmade red ornament. Snap a close-up photo.",
+        icon: "fa-tree"
+      },
+      {
+        day: 4,
+        title: "Steaming Mug of Cheer",
+        category: "Holiday Activity",
+        desc: "Prepare a warm mug of hot cocoa, spiced cider, or holiday tea topped with marshmallows or whipped cream. Photo your festive mug!",
+        icon: "fa-mug-hot"
+      },
+      {
+        day: 5,
+        title: "Festive Pinecone or Pine Needles",
+        category: "Scavenger Find",
+        desc: "Find a pinecone, evergreen sprig, or cinnamon-scented pine decoration outside or inside.",
+        icon: "fa-seedling"
+      },
+      {
+        day: 6,
+        title: "Send a Cheerful Greeting",
+        category: "Holiday Activity",
+        desc: "Write a holiday postcard, note, or send a warm appreciative text message to a dear friend or family member. Snap the card or message screen.",
+        icon: "fa-envelope-open-text"
+      },
+      {
+        day: 7,
+        title: "Sparkling Holiday Lights",
+        category: "Scavenger Find",
+        desc: "Locate twinkling fairy lights, balcony lights, or neighborhood holiday displays glowing brightly in the dark.",
+        icon: "fa-lightbulb"
+      },
+      {
+        day: 8,
+        title: "Holiday Hat or Headband",
+        category: "Holiday Activity",
+        desc: "Put on a Santa hat, reindeer antlers, winter beanie, or festive headband for a cheerful quick snapshot.",
+        icon: "fa-hat-wizard"
+      },
+      {
+        day: 9,
+        title: "Find a Golden Bell or Star",
+        category: "Scavenger Find",
+        desc: "Find a golden jingle bell, tree topper star, or golden ribbon bow.",
+        icon: "fa-bell"
+      },
+      {
+        day: 10,
+        title: "Listen to a Favorite Carol",
+        category: "Holiday Activity",
+        desc: "Put on your all-time favorite holiday song or album. Snap a photo of your music player, vinyl, or speaker in action.",
+        icon: "fa-music"
+      },
+      {
+        day: 11,
+        title: "Striped Candy Cane",
+        category: "Scavenger Find",
+        desc: "Hunt down a peppermint candy cane or festive peppermint confection.",
+        icon: "fa-candy-cane"
+      },
+      {
+        day: 12,
+        title: "Wrap a Gift or Present Box",
+        category: "Holiday Activity",
+        desc: "Wrap a present, gift bag, or tie a pretty ribbon around a gift for someone special.",
+        icon: "fa-gift"
+      },
+      {
+        day: 13,
+        title: "A Snowman or Snowflake",
+        category: "Scavenger Find",
+        desc: "Find a snowman figure, real outdoor snow sculpture, paper snowflake cutout, or snowflake pattern on a window.",
+        icon: "fa-snowflake"
+      },
+      {
+        day: 14,
+        title: "Candlelight Glow",
+        category: "Holiday Activity",
+        desc: "Light a cozy scented candle (pine, vanilla, or cinnamon) or an LED candle to bring warmth to your room.",
+        icon: "fa-fire"
+      },
+      {
+        day: 15,
+        title: "Cute Holiday Creature",
+        category: "Scavenger Find",
+        desc: "Spot a reindeer decoration, holiday bird (robin/cardinal), polar bear figurine, or your pet in a festive mood!",
+        icon: "fa-paw"
+      },
+      {
+        day: 16,
+        title: "Read a Holiday Story or Poem",
+        category: "Holiday Activity",
+        desc: "Spend 10 minutes reading a classic winter tale, holiday poem, or children's book. Photograph the page or cover.",
+        icon: "fa-book-open"
+      },
+      {
+        day: 17,
+        title: "Spiced Cinnamon or Winter Scent",
+        category: "Scavenger Find",
+        desc: "Find cinnamon sticks, orange cloves, or holiday potpourri that fills the air with nostalgia.",
+        icon: "fa-mortar-pestle"
+      },
+      {
+        day: 18,
+        title: "Grand Reveal Day: The Victory Celebration!",
+        category: "Grand Finale",
+        desc: "The 18th Day of Reveal! Take a victory selfie or group celebration photo showing your holiday spirit and celebrating finishing the 18 days!",
+        icon: "fa-champagne-glasses"
+      }
+    ];
+
+    /* ==========================================================================
+       APPLICATION STATE & LOCAL STORAGE
+       ========================================================================== */
+    const STORAGE_KEY = 'advent_calendar_data_v1';
+    const DEMO_MODE_KEY = 'advent_demo_unlock_all';
+
+    // State schema: { 1: { completed: true, photo: 'data:image/...', note: '...' }, ... }
+    let calendarState = {};
+    let isDemoUnlockedAll = false;
+    let activeDayNumber = null;
+    let tempUploadedPhotoBase64 = null;
+
+    // Initialize application
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      createSnow();
+      renderCalendar();
+      updateProgress();
+      checkAllRevealedState();
+
+      // Setup dropZone click trigger
+      const dropZone = document.getElementById('dropZone');
+      if (dropZone) {
+        dropZone.addEventListener('click', () => {
+          document.getElementById('photoFileInput').click();
+        });
+
+        // Drag and drop handlers
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-festive-gold', 'bg-festive-emerald/40');
+          }, false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+          dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-festive-gold', 'bg-festive-emerald/40');
+          }, false);
+        });
+        dropZone.addEventListener('drop', (e) => {
+          if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+            processFile(e.dataTransfer.files[0]);
+          }
+        });
+      }
+
+      // Demo toggle switch listener
+      const toggle = document.getElementById('demoModeToggle');
+      if (toggle) {
+        toggle.checked = isDemoUnlockedAll;
+        toggle.addEventListener('change', (e) => {
+          isDemoUnlockedAll = e.target.checked;
+          localStorage.setItem(DEMO_MODE_KEY, isDemoUnlockedAll ? 'true' : 'false');
+          showToast(isDemoUnlockedAll ? "Preview Mode: All 18 Days Unlocked!" : "Simulated Date Unlock Mode Enabled");
+          renderCalendar();
+        });
+      }
+    });
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        calendarState = saved ? JSON.parse(saved) : {};
+        const savedDemo = localStorage.getItem(DEMO_MODE_KEY);
+        // Default to true for instant friendly preview, or respect user choice
+        isDemoUnlockedAll = savedDemo !== null ? savedDemo === 'true' : true;
+      } catch (err) {
+        console.error("Error loading state:", err);
+        calendarState = {};
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(calendarState));
+      } catch (err) {
+        console.warn("Storage quota may be reached or local storage disabled:", err);
+        showToast("Storage quota warning: consider smaller photos", true);
+      }
+    }
+
+    /* ==========================================================================
+       DATE LOGIC & UNLOCKING
+       ========================================================================== */
+    function isDayUnlocked(dayNumber) {
+      if (isDemoUnlockedAll) return true;
+
+      // Realistic December Date Unlocker:
+      // If today is December, day <= current December date is unlocked.
+      // If outside December or earlier, let Days 1-3 be accessible or based on current month day.
+      const now = new Date();
+      const currentMonth = now.getMonth(); // 11 is December
+      const currentDay = now.getDate();
+
+      if (currentMonth === 11) { // December
+        return dayNumber <= currentDay;
+      } else {
+        // For non-December test periods, unlock first 3 days or allow demo switch
+        return dayNumber <= 3;
+      }
+    }
+
+    /* ==========================================================================
+       RENDER CALENDAR GRID
+       ========================================================================== */
+    function renderCalendar() {
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
+
+      ADVENT_TASKS.forEach((task) => {
+        const entry = calendarState[task.day] || { completed: false, photo: null, note: '' };
+        const unlocked = isDayUnlocked(task.day);
+        const isDay18 = task.day === 18;
+
+        const card = document.createElement('div');
+        card.className = `group relative rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 select-none overflow-hidden cursor-pointer print-card ${
+          entry.completed 
+            ? 'bg-gradient-to-b from-stone-900/90 to-festive-darkgreen/90 border-2 border-emerald-500/80 shadow-lg' 
+            : unlocked 
+              ? isDay18 
+                ? 'bg-gradient-to-br from-festive-crimson/80 via-festive-pine/90 to-amber-950/80 border-2 border-festive-gold ready-glow shadow-xl hover:-translate-y-1' 
+                : 'bg-festive-pine/80 border border-festive-gold/50 ready-glow hover:border-festive-gold shadow-md hover:-translate-y-1'
+              : 'bg-stone-950/60 border border-stone-800/80 opacity-75 cursor-not-allowed hover:border-stone-700'
+        }`;
+
+        // Print header inside card
+        const printInfo = `
+          <div class="print-only mb-1 border-b pb-1">
+            <div class="flex justify-between items-center text-xs font-bold text-gray-800">
+              <span>Day ${task.day}: ${escapeHtml(task.title)}</span>
+              <span>${entry.completed ? '✓ Completed' : 'Pending'}</span>
+            </div>
+            <p class="text-[9px] text-gray-600">${escapeHtml(task.desc)}</p>
+          </div>
+        `;
+
+        // Card Inner HTML
+        let innerHTML = printInfo;
+
+        if (entry.completed && entry.photo) {
+          // COMPLETED STATE WITH PHOTO
+          innerHTML += `
+            <div class="relative w-full h-28 sm:h-32 rounded-xl overflow-hidden mb-3 border border-emerald-500/40">
+              <img src="${entry.photo}" alt="Day ${task.day} proof" class="w-full h-full object-cover transition-transform group-hover:scale-105 print-img" />
+              <div class="absolute top-2 right-2 bg-emerald-700 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow flex items-center gap-1 no-print">
+                <i class="fa-solid fa-check text-[10px]"></i> Done
+              </div>
+              <div class="absolute bottom-1 left-2 text-[10px] text-white/90 drop-shadow no-print">
+                <i class="fa-solid fa-camera"></i> Photo Proof
+              </div>
+            </div>
+            <div class="flex items-center justify-between no-print">
+              <div>
+                <span class="text-xs text-festive-gold font-bold">Day ${task.day}</span>
+                <h4 class="text-xs font-semibold text-stone-100 truncate max-w-[120px] sm:max-w-[150px]">${escapeHtml(task.title)}</h4>
+              </div>
+              <span class="text-xs text-emerald-400 hover:text-emerald-300 underline font-medium">View</span>
+            </div>
+          `;
+        } else if (entry.completed && !entry.photo) {
+          // COMPLETED WITHOUT PHOTO
+          innerHTML += `
+            <div class="flex flex-col items-center justify-center py-6 text-center">
+              <div class="w-12 h-12 rounded-full bg-emerald-900/60 text-emerald-400 border border-emerald-500/40 flex items-center justify-center text-xl mb-2">
+                <i class="fa-solid fa-check-double"></i>
+              </div>
+              <span class="text-xs font-bold text-festive-gold">Day ${task.day}</span>
+              <h4 class="text-xs font-semibold text-stone-200 mt-0.5">${escapeHtml(task.title)}</h4>
+              <span class="text-[10px] text-emerald-400 mt-1">Completed!</span>
+            </div>
+          `;
+        } else if (unlocked) {
+          // UNLOCKED READY STATE
+          innerHTML += `
+            <div class="flex items-start justify-between no-print">
+              <span class="w-9 h-9 rounded-xl ${isDay18 ? 'bg-gradient-to-tr from-amber-400 to-festive-gold text-stone-900 font-black' : 'bg-festive-emerald/70 text-festive-lightgold font-bold border border-festive-gold/40'} flex items-center justify-center font-mono text-sm shadow">
+                ${task.day}
+              </span>
+              <span class="text-xs ${isDay18 ? 'text-amber-300 font-bold animate-pulse' : 'text-festive-gold/80'}">
+                ${isDay18 ? '<i class="fa-solid fa-crown mr-1"></i>Grand Reveal' : '<i class="fa-solid fa-gift"></i>'}
+              </span>
+            </div>
+            <div class="my-4 no-print">
+              <div class="w-10 h-10 rounded-full mx-auto ${isDay18 ? 'bg-festive-crimson/50 text-amber-300' : 'bg-festive-gold/10 text-festive-gold'} flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition-transform">
+                <i class="fa-solid ${task.icon}"></i>
+              </div>
+              <h4 class="text-center font-bold text-xs sm:text-sm text-stone-100 group-hover:text-festive-lightgold transition-colors line-clamp-1">
+                ${escapeHtml(task.title)}
+              </h4>
+              <p class="text-[11px] text-stone-300 text-center mt-1 font-light line-clamp-2">
+                ${escapeHtml(task.desc)}
+              </p>
+            </div>
+            <div class="text-center pt-2 border-t border-festive-gold/20 no-print">
+              <span class="inline-block text-[11px] font-semibold text-festive-gold group-hover:translate-x-0.5 transition-transform">
+                Open Day ${task.day} <i class="fa-solid fa-chevron-right text-[9px] ml-0.5"></i>
+              </span>
+            </div>
+          `;
+        } else {
+          // LOCKED STATE
+          innerHTML += `
+            <div class="flex items-center justify-between opacity-50 no-print">
+              <span class="font-mono text-xs font-semibold text-stone-400">Day ${task.day}</span>
+              <i class="fa-solid fa-lock text-stone-500 text-xs"></i>
+            </div>
+            <div class="my-6 text-center opacity-60 no-print">
+              <div class="w-10 h-10 rounded-full mx-auto bg-stone-900 text-stone-500 flex items-center justify-center text-base mb-2">
+                <i class="fa-solid fa-lock"></i>
+              </div>
+              <p class="text-xs text-stone-400 font-medium">Locked Until Dec ${task.day}</p>
+              <p class="text-[10px] text-stone-400 mt-1">Unlock via toggle above</p>
+            </div>
+            <div class="text-center no-print opacity-40">
+              <span class="text-[10px] text-stone-500">Wait for Day</span>
+            </div>
+          `;
+        }
+
+        // Print Card Note preview if existing
+        if (entry.note) {
+          innerHTML += `
+            <div class="print-only text-[9px] text-gray-700 italic border-t pt-1 mt-1">
+              Note: "${escapeHtml(entry.note)}"
+            </div>
+          `;
+        }
+
+        card.innerHTML = innerHTML;
+
+        // Click Handler
+        card.addEventListener('click', () => {
+          if (unlocked) {
+            openDayModal(task.day);
+          } else {
+            showToast(`Day ${task.day} is locked! Toggle "Unlock All Days" on top right to preview.`, true);
+          }
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    /* ==========================================================================
+       PROGRESS TRACKER & REVEAL CELEBRATION
+       ========================================================================== */
+    function updateProgress() {
+      let completedCount = 0;
+      for (let i = 1; i <= 18; i++) {
+        if (calendarState[i] && calendarState[i].completed) {
+          completedCount++;
+        }
+      }
+
+      const percent = Math.round((completedCount / 18) * 100);
+      document.getElementById('progressText').textContent = `${completedCount} / 18 Completed`;
+      document.getElementById('progressBar').style.width = `${percent}%`;
+      document.getElementById('statusBadge').textContent = `${percent}% Complete`;
+
+      // Update printable info
+      const printStats = document.getElementById('printCompletionStats');
+      if (printStats) {
+        printStats.textContent = `${completedCount} of 18 Days Completed (${percent}%)`;
+      }
+
+      checkAllRevealedState();
+    }
+
+    function checkAllRevealedState() {
+      const section = document.getElementById('revealCelebrationSection');
+      const collage = document.getElementById('collageContainer');
+      const day18Completed = calendarState[18] && calendarState[18].completed;
+
+      // Count total completed
+      let total = 0;
+      for (let i = 1; i <= 18; i++) {
+        if (calendarState[i] && calendarState[i].completed) total++;
+      }
+
+      // Show Grand Reveal if Day 18 completed or all 18 completed
+      if (day18Completed || total === 18) {
+        section.classList.remove('hidden');
+        buildCollage(collage);
+      } else {
+        section.classList.add('hidden');
+      }
+    }
+
+    function buildCollage(container) {
+      if (!container) return;
+      container.innerHTML = '';
+
+      for (let i = 1; i <= 18; i++) {
+        const item = calendarState[i];
+        const task = ADVENT_TASKS[i - 1];
+        const tile = document.createElement('div');
+        tile.className = "relative rounded-xl overflow-hidden aspect-square border border-festive-gold/40 bg-stone-900 group cursor-pointer shadow-md";
+
+        if (item && item.photo) {
+          tile.innerHTML = `
+            <img src="${item.photo}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-1.5 opacity-90 group-hover:opacity-100">
+              <span class="text-[10px] font-bold text-festive-gold">Day ${i}</span>
+            </div>
+          `;
+        } else {
+          tile.innerHTML = `
+            <div class="w-full h-full flex flex-col items-center justify-center p-2 text-center bg-festive-pine/60">
+              <span class="text-xs font-bold text-festive-gold">Day ${i}</span>
+              <span class="text-[10px] text-stone-400 truncate max-w-full">${task.title}</span>
+              <span class="text-[9px] text-emerald-400 mt-1">${item && item.completed ? '✓' : 'Pending'}</span>
+            </div>
+          `;
+        }
+
+        tile.addEventListener('click', () => {
+          if (isDayUnlocked(i)) openDayModal(i);
+        });
+
+        container.appendChild(tile);
+      }
+    }
+
+    /* ==========================================================================
+       MODAL CONTROLS & PHOTO HANDLING
+       ========================================================================== */
+    function openDayModal(dayNumber) {
+      activeDayNumber = dayNumber;
+      const task = ADVENT_TASKS.find(t => t.day === dayNumber);
+      if (!task) return;
+
+      const currentEntry = calendarState[dayNumber] || { completed: false, photo: null, note: '' };
+
+      // Set headers
+      document.getElementById('modalDayNumberBadge').textContent = `Day ${dayNumber < 10 ? '0' + dayNumber : dayNumber}`;
+      document.getElementById('modalCategory').textContent = task.category;
+      document.getElementById('modalTaskTitle').textContent = task.title;
+      document.getElementById('modalTaskDesc').textContent = task.desc;
+      
+      const statusEl = document.getElementById('modalDayStatus');
+      if (currentEntry.completed) {
+        statusEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> Completed Entry`;
+        statusEl.className = "text-xs font-semibold tracking-wider uppercase text-emerald-400 flex items-center gap-1";
+      } else {
+        statusEl.innerHTML = `<i class="fa-solid fa-lock-open text-[10px]"></i> Unlocked Activity`;
+        statusEl.className = "text-xs font-semibold tracking-wider uppercase text-festive-gold flex items-center gap-1";
+      }
+
+      // Populate notes & photos
+      document.getElementById('userNoteInput').value = currentEntry.note || '';
+      tempUploadedPhotoBase64 = currentEntry.photo || null;
+
+      updatePhotoPreviewUI();
+
+      // Show modal
+      const modal = document.getElementById('dayModal');
+      const modalBox = document.getElementById('modalBox');
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modalBox.classList.remove('scale-95');
+        modalBox.classList.add('scale-100');
+      }, 10);
+    }
+
+    function closeDayModal() {
+      const modal = document.getElementById('dayModal');
+      const modalBox = document.getElementById('modalBox');
+      modal.classList.add('opacity-0');
+      modalBox.classList.remove('scale-100');
+      modalBox.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        activeDayNumber = null;
+        tempUploadedPhotoBase64 = null;
+        // reset file input
+        const fileInput = document.getElementById('photoFileInput');
+        if (fileInput) fileInput.value = '';
+      }, 250);
+    }
+
+    function handlePhotoUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        processFile(file);
+      }
+    }
+
+    function processFile(file) {
+      if (!file.type.startsWith('image/')) {
+        showToast("Please select a valid image file (JPG, PNG, WebP)", true);
+        return;
+      }
+
+      // Compress/resize image with HTML5 canvas to optimize localStorage quota
+      const reader = new FileReader();
+      reader.onload = function(readerEvent) {
+        const img = new Image();
+        img.onload = function() {
+          const maxDim = 900; // Good balance for crisp PDF print and compact storage
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Get optimized base64 string
+          tempUploadedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.82);
+          updatePhotoPreviewUI();
+          showToast("Photo proof loaded!");
+        };
+        img.src = readerEvent.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removePhotoProof() {
+      tempUploadedPhotoBase64 = null;
+      const fileInput = document.getElementById('photoFileInput');
+      if (fileInput) fileInput.value = '';
+      updatePhotoPreviewUI();
+    }
+
+    function updatePhotoPreviewUI() {
+      const dropZone = document.getElementById('dropZone');
+      const previewContainer = document.getElementById('photoPreviewContainer');
+      const previewImg = document.getElementById('photoPreviewImg');
+
+      if (tempUploadedPhotoBase64) {
+        previewImg.src = tempUploadedPhotoBase64;
+        previewContainer.classList.remove('hidden');
+        dropZone.classList.add('hidden');
+      } else {
+        previewImg.src = '';
+        previewContainer.classList.add('hidden');
+        dropZone.classList.remove('hidden');
+      }
+    }
+
+    function saveDayEntry() {
+      if (!activeDayNumber) return;
+
+      const noteText = document.getElementById('userNoteInput').value.trim();
+
+      calendarState[activeDayNumber] = {
+        completed: true,
+        photo: tempUploadedPhotoBase64 || null,
+        note: noteText,
+        updatedAt: new Date().toISOString()
+      };
+
+      saveState();
+      renderCalendar();
+      updateProgress();
+
+      showToast(`Day ${activeDayNumber} saved and completed! 🎉`);
+
+      // Special Celebration on Day 18 completion
+      if (activeDayNumber === 18) {
+        triggerConfetti();
+      }
+
+      closeDayModal();
+    }
+
+    /* ==========================================================================
+       CONFETTI & CELEBRATION
+       ========================================================================== */
+    function triggerConfetti() {
+      if (typeof confetti === 'function') {
+        const count = 200;
+        const defaults = {
+          origin: { y: 0.7 }
+        };
+
+        function fire(particleRatio, opts) {
+          confetti(Object.assign({}, defaults, opts, {
+            particleCount: Math.floor(count * particleRatio)
+          }));
+        }
+
+        fire(0.25, {
+          spread: 26,
+          startVelocity: 55,
+          colors: ['#e6b85c', '#8b1e2a', '#ffffff']
+        });
+        fire(0.2, {
+          spread: 60,
+          colors: ['#2ecc71', '#f1c40f', '#e74c3c']
+        });
+        fire(0.35, {
+          spread: 100,
+          decay: 0.91,
+          scalar: 0.8
+        });
+        fire(0.1, {
+          spread: 120,
+          startVelocity: 25,
+          decay: 0.92,
+          colors: ['#e6b85c', '#ffffff']
+        });
+        fire(0.1, {
+          spread: 120,
+          startVelocity: 45,
+        });
+      }
+    }
+
+    /* ==========================================================================
+       PRINT TO PDF TRIGGER
+       ========================================================================== */
+    function triggerPrintCalendar() {
+      // Ensure all cards are clean for print
+      showToast("Preparing printable layout for PDF export...");
+      setTimeout(() => {
+        window.print();
+      }, 300);
+    }
+
+    /* ==========================================================================
+       SNOWFALL ANIMATION EFFECT
+       ========================================================================== */
+    function createSnow() {
+      const container = document.getElementById('snowContainer');
+      const flakeChars = ['❄', '❅', '•', '·', '❆'];
+      const maxFlakes = window.innerWidth < 640 ? 25 : 55;
+
+      for (let i = 0; i < maxFlakes; i++) {
+        const flake = document.createElement('div');
+        flake.className = 'snowflake';
+        flake.textContent = flakeChars[Math.floor(Math.random() * flakeChars.length)];
+        
+        const size = Math.random() * 1.1 + 0.5; // rem
+        const left = Math.random() * 100; // vw
+        const duration = Math.random() * 8 + 6; // sec
+        const delay = Math.random() * 7; // sec
+        const opacity = Math.random() * 0.7 + 0.3;
+
+        flake.style.fontSize = `${size}rem`;
+        flake.style.left = `${left}vw`;
+        flake.style.animationDuration = `${duration}s`;
+        flake.style.animationDelay = `${delay}s`;
+        flake.style.opacity = opacity;
+        flake.style.animationIterationCount = 'infinite';
+
+        container.appendChild(flake);
+      }
+    }
+
+    /* ==========================================================================
+       TOAST NOTIFICATION HELPER
+       ========================================================================== */
+    let toastTimeout = null;
+    function showToast(message, isWarning = false) {
+      const toast = document.getElementById('toast');
+      const msg = document.getElementById('toastMessage');
+      const icon = document.getElementById('toastIcon');
+
+      clearTimeout(toastTimeout);
+      msg.textContent = message;
+
+      if (isWarning) {
+        icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-400"></i>';
+      } else {
+        icon.innerHTML = '<i class="fa-solid fa-circle-check text-festive-gold"></i>';
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3500);
+    }
+
+    /* ==========================================================================
+       RESET FUNCTION
+       ========================================================================== */
+    function resetAllData() {
+      // Avoid browser native confirm() - custom friendly confirmation check
+      const proceed = window.confirm ? confirm("Are you sure you want to reset all 18 day photos and notes? This will clear stored progress.") : true;
+      if (proceed) {
+        calendarState = {};
+        localStorage.removeItem(STORAGE_KEY);
+        renderCalendar();
+        updateProgress();
+        showToast("Calendar progress reset successfully.");
+      }
+    }
+
+    /* Helper: Escape HTML to avoid XSS in notes */
+    function escapeHtml(string) {
+      if (!string) return '';
+      return String(string)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>
