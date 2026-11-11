@@ -4,14 +4,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>18-Day Holiday Scavenger & Activity Advent Calendar</title>
+  <title>12-Day Holiday Scavenger Hunt (Nov 30 - Dec 11)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter & Cinzel Decorative/Playfair for festive flair -->
+  <!-- Google Fonts: Cinzel & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@300;400;500;600;700&family=Mountains+of+Christmas:wght@700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -33,12 +33,11 @@
               lightgold: '#f9e29d',
               cream: '#fdfbf7',
               snow: '#f4f7f6',
-              charcoal: '#22252a'
+              charcoal: '#1a1d21'
             }
           },
           fontFamily: {
             festive: ['"Cinzel"', 'serif'],
-            holiday: ['"Mountains of Christmas"', 'cursive'],
             sans: ['"Inter"', 'sans-serif'],
           }
         }
@@ -47,11 +46,11 @@
   </script>
 
   <style>
-    /* Snow particles styling */
+    /* Snow particles */
     .snowflake {
       position: fixed;
       top: -10px;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 255, 255, 0.85);
       user-select: none;
       pointer-events: none;
       z-index: 10;
@@ -64,7 +63,7 @@
       }
     }
 
-    /* Shimmer animation for ready blocks */
+    /* Glow animation for currently active days */
     @keyframes goldGlow {
 
       0%,
@@ -73,37 +72,25 @@
       }
 
       50% {
-        box-shadow: 0 8px 25px rgba(230, 184, 92, 0.55), inset 0 0 16px rgba(230, 184, 92, 0.3);
+        box-shadow: 0 8px 25px rgba(230, 184, 92, 0.6), inset 0 0 16px rgba(230, 184, 92, 0.3);
       }
     }
 
-    .ready-glow {
+    .active-glow {
       animation: goldGlow 3s infinite ease-in-out;
     }
 
-    /* Modal transition */
-    .modal-enter {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-
-    .modal-enter-active {
-      opacity: 1;
-      transform: scale(1);
-      transition: opacity 0.25s ease-out, transform 0.25s ease-out;
-    }
-
-    /* Custom Scrollbar */
+    /* Custom scrollbars */
     ::-webkit-scrollbar {
-      width: 8px;
+      width: 7px;
     }
 
     ::-webkit-scrollbar-track {
-      background: #0f291e;
+      background: #89b6e0;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: #2b5d44;
+      background: #5d92c2;
       border-radius: 4px;
     }
 
@@ -111,22 +98,22 @@
       background: #e6b85c;
     }
 
-    /* PRINT SPECIFIC STYLES FOR PDF EXPORT */
+    /* Print styles for PDF saving */
     @media print {
       body {
         background: #ffffff !important;
-        color: #1a1a1a !important;
-        font-size: 10pt;
+        color: #111827 !important;
+        font-size: 9.5pt;
       }
 
       .no-print,
       header,
       footer,
       #dayModal,
+      #adminModal,
       #toast,
       .snowflake,
-      #revealCelebrationSection,
-      #demoToggleContainer {
+      #revealCelebrationSection {
         display: none !important;
       }
 
@@ -144,33 +131,28 @@
         display: grid !important;
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 12px !important;
-        page-break-inside: auto;
       }
 
       .print-card {
-        border: 1.5px solid #bdc3c7 !important;
+        border: 1.5px solid #d1d5db !important;
         background: #fafafa !important;
         color: #111 !important;
         box-shadow: none !important;
         page-break-inside: avoid !important;
         border-radius: 8px !important;
-        padding: 8px !important;
+        padding: 10px !important;
+        min-height: 230px !important;
         display: flex !important;
         flex-direction: column !important;
         justify-content: space-between !important;
-        min-height: 240px !important;
       }
 
       .print-img {
-        max-height: 120px !important;
+        max-height: 125px !important;
         object-fit: cover !important;
         width: 100% !important;
-        border-radius: 4px !important;
-        margin-top: 4px !important;
-      }
-
-      .page-break {
-        page-break-before: always;
+        border-radius: 6px !important;
+        margin-top: 6px !important;
       }
     }
 
@@ -183,62 +165,77 @@
 </head>
 
 <body
-  class="bg-gradient-to-b from-[#0b1c15] via-[#102b20] to-[#0a1812] text-festive-cream font-sans min-h-screen relative selection:bg-festive-gold selection:text-festive-pine">
+  class="bg-[#89b6e0] bg-gradient-to-b from-[#89b6e0] via-[#7aaad6] to-[#6d9ecb] text-festive-cream font-sans min-h-screen relative selection:bg-festive-gold selection:text-festive-pine">
 
-  <!-- Interactive Snow Layer Container -->
+  <!-- Snowfall element container -->
   <div id="snowContainer" class="pointer-events-none fixed inset-0 overflow-hidden z-0"></div>
 
-  <!-- Main Application Wrapper -->
+  <!-- Main Container -->
   <div id="mainContainer"
     class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex flex-col min-h-screen">
 
     <!-- Header Section -->
-    <header class="mb-8 text-center relative border-b border-festive-gold/20 pb-8">
+    <header class="mb-8 text-center relative border-b border-white/25 pb-8">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
-        <!-- Badge / Small tagline -->
+
+        <!-- Badge -->
         <div
-          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-festive-emerald/60 border border-festive-gold/40 text-festive-gold text-xs sm:text-sm font-semibold tracking-wide shadow-sm">
-          <i class="fa-solid fa-snowflake animate-spin" style="animation-duration: 9s;"></i>
-          <span>18 DAYS OF JOY & DISCOVERY</span>
+          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-900/40 backdrop-blur-md border border-white/40 text-festive-lightgold text-xs sm:text-sm font-semibold tracking-wide shadow-sm">
+          <i class="fa-regular fa-calendar-days text-festive-lightgold"></i>
+          <span>NOV 30 – DEC 11 • 72-HOUR SUBMISSION WINDOW</span>
         </div>
 
-        <!-- Controls: Admin Login / Demo Switch & Print Button -->
-        <div class="flex items-center flex-wrap gap-2 sm:gap-3 no-print">
+        <!-- Top Right Actions: Admin + Print -->
+        <div class="flex items-center flex-wrap gap-2.5 no-print">
 
-          <!-- Admin Logged In Controls (Hidden by default, shown when Admin logs in) -->
+          <!-- Admin Logged In Badge & Toggle Controls -->
           <div id="adminPanelControls" class="hidden items-center gap-2">
-            <!-- Unlock Mode Switch -->
-            <div id="demoToggleContainer"
-              class="flex items-center bg-festive-pine/90 border border-festive-gold/60 rounded-xl px-3 py-1.5 shadow-md">
-              <span class="text-xs mr-2 text-festive-lightgold font-medium flex items-center gap-1">
-                <i class="fa-solid fa-wand-magic-sparkles text-festive-gold"></i>
-                <span class="hidden sm:inline">Unlock All</span>
+            <div
+              class="flex items-center bg-festive-pine/95 border border-festive-gold/60 rounded-xl px-3 py-1.5 shadow-md">
+              <span class="text-xs mr-2 text-festive-lightgold font-medium flex items-center gap-1.5">
+                <i class="fa-solid fa-unlock-keyhole text-festive-gold"></i>
+                <span class="hidden sm:inline">Bypass Locks & 72h</span>
               </span>
               <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="demoModeToggle" class="sr-only peer" />
+                <input type="checkbox" id="adminBypassToggle" class="sr-only peer" />
                 <div
                   class="w-9 h-5 bg-stone-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-festive-gold">
                 </div>
               </label>
             </div>
 
-            <!-- Admin Logout Button -->
+            <!-- Admin Simulated Date Selector -->
+            <div
+              class="hidden lg:flex items-center bg-stone-900/90 border border-stone-700 rounded-xl px-2.5 py-1 text-xs">
+              <span class="text-stone-400 mr-2">Simulate Date:</span>
+              <select id="adminSimulatedDateSelect" onchange="handleSimulatedDateChange(event)"
+                class="bg-transparent text-festive-lightgold font-mono focus:outline-none cursor-pointer">
+                <option value="REAL" class="bg-stone-900 text-stone-200">Current Real Date</option>
+                <option value="2026-11-29" class="bg-stone-900 text-stone-200">Nov 29 (Before Start)</option>
+                <option value="2026-11-30" class="bg-stone-900 text-stone-200">Nov 30 (Day 1 Unlocks)</option>
+                <option value="2026-12-02" class="bg-stone-900 text-stone-200">Dec 02 (Day 1 Still Open)</option>
+                <option value="2026-12-04" class="bg-stone-900 text-stone-200">Dec 04 (Day 1 Expired)</option>
+                <option value="2026-12-11" class="bg-stone-900 text-stone-200">Dec 11 (Grand Reveal)</option>
+              </select>
+            </div>
+
+            <!-- Admin Logout -->
             <button onclick="handleAdminLogout()"
               class="px-2.5 py-1.5 rounded-xl bg-stone-800/80 hover:bg-stone-700 text-stone-300 hover:text-white border border-stone-600 text-xs font-medium transition-colors flex items-center gap-1"
-              title="Log out from Admin">
+              title="Log out">
               <i class="fa-solid fa-right-from-bracket"></i>
               <span class="hidden md:inline">Logout</span>
             </button>
           </div>
 
-          <!-- Admin Login Trigger Button (Visible when NOT logged in) -->
+          <!-- Admin Login Trigger (Shown when not logged in) -->
           <button id="btnAdminLoginTrigger" onclick="openAdminModal()"
             class="px-3 py-1.5 rounded-xl bg-stone-900/70 hover:bg-festive-pine text-stone-300 hover:text-festive-gold border border-stone-700 hover:border-festive-gold/40 text-xs font-medium transition-all flex items-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-lock text-stone-400"></i>
+            <i class="fa-solid fa-shield-halved text-stone-400"></i>
             <span>Admin</span>
           </button>
 
-          <!-- Print / PDF Trigger Button -->
+          <!-- Print / PDF Button -->
           <button id="btnPrint" onclick="triggerPrintCalendar()"
             class="inline-flex items-center gap-2 bg-gradient-to-r from-festive-crimson to-festive-berry hover:from-red-700 hover:to-festive-crimson text-white px-4 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-festive-crimson/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 text-sm border border-festive-gold/30">
             <i class="fa-solid fa-file-pdf text-festive-lightgold"></i>
@@ -249,58 +246,80 @@
 
       <!-- Main Titles -->
       <h1
-        class="text-3xl sm:text-5xl lg:text-6xl font-bold font-festive tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-festive-lightgold to-amber-200 drop-shadow-md">
-        18-Day Holiday Scavenger Hunt
+        class="text-3xl sm:text-5xl lg:text-6xl font-bold font-festive tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-100 to-amber-200 drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]">
+        12-Day Holiday Countdown
       </h1>
-      <p class="mt-3 text-stone-300 text-sm sm:text-base max-w-2xl mx-auto font-light leading-relaxed">
-        Unlock one daily scavenger item or cheerful activity each day. Snap and upload photo proof of each
-        discovery—culminating in the <span class="text-festive-gold font-medium">Grand Reveal Showcase on Day 18</span>!
+      <p class="mt-3 text-stone-100 text-sm sm:text-base max-w-2xl mx-auto font-normal leading-relaxed drop-shadow-sm">
+        Starting <span class="text-white font-semibold">November 30 through December 11</span>. Each day unlocks a new
+        holiday challenge. Complete each event and upload your photo proof within <span
+          class="text-amber-200 font-bold underline decoration-amber-300/60">72 hours</span> before the submission
+        window closes!
       </p>
 
-      <!-- Progress Section -->
+      <!-- Challenge Rule Highlights -->
+      <div class="mt-4 flex flex-wrap items-center justify-center gap-3 text-xs text-stone-100 no-print">
+        <span
+          class="px-3 py-1 rounded-full bg-stone-900/40 backdrop-blur-sm border border-white/30 flex items-center gap-1.5 shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Unlocks Daily (00:00)
+        </span>
+        <span
+          class="px-3 py-1 rounded-full bg-stone-900/40 backdrop-blur-sm border border-white/30 flex items-center gap-1.5 shadow-sm">
+          <i class="fa-regular fa-clock text-amber-300"></i> 72h Photo Window
+        </span>
+        <span
+          class="px-3 py-1 rounded-full bg-stone-900/40 backdrop-blur-sm border border-white/30 flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-lock text-red-300"></i> Past Days Lock After 72h
+        </span>
+        <span
+          class="px-3 py-1 rounded-full bg-stone-900/40 backdrop-blur-sm border border-white/30 flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-crown text-festive-gold"></i> Day 12 Grand Finale
+        </span>
+      </div>
+
+      <!-- Progress Bar -->
       <div
-        class="mt-6 max-w-xl mx-auto bg-festive-pine/90 p-4 rounded-2xl border border-festive-gold/30 shadow-xl backdrop-blur-md">
+        class="mt-6 max-w-xl mx-auto bg-stone-900/50 p-4 rounded-2xl border border-white/30 shadow-xl backdrop-blur-md">
         <div class="flex items-center justify-between text-xs sm:text-sm mb-2 font-medium">
-          <span class="flex items-center gap-1.5 text-stone-200">
+          <span class="flex items-center gap-1.5 text-stone-100">
             <i class="fa-solid fa-trophy text-festive-gold"></i>
             Challenge Progress
           </span>
-          <span id="progressText" class="text-festive-lightgold font-bold font-mono text-sm sm:text-base">0 / 18
+          <span id="progressText" class="text-festive-lightgold font-bold font-mono text-sm sm:text-base">0 / 12
             Completed</span>
         </div>
-        <div class="w-full bg-stone-900/80 rounded-full h-3.5 p-0.5 border border-festive-gold/20 overflow-hidden">
+        <div class="w-full bg-stone-950/70 rounded-full h-3.5 p-0.5 border border-white/20 overflow-hidden">
           <div id="progressBar"
             class="bg-gradient-to-r from-emerald-500 via-festive-gold to-amber-400 h-full rounded-full transition-all duration-700 ease-out shadow-sm"
             style="width: 0%"></div>
         </div>
-        <div class="mt-2.5 flex items-center justify-between text-xs text-stone-400">
-          <span>Day 1 Kickoff</span>
+        <div class="mt-2.5 flex items-center justify-between text-xs text-stone-200">
+          <span>Day 1 (Nov 30)</span>
           <span id="statusBadge"
-            class="text-xs px-2.5 py-0.5 rounded-full bg-festive-emerald/50 text-emerald-300 border border-emerald-500/30">
+            class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-900/60 text-emerald-200 border border-emerald-400/30">
             0% Complete
           </span>
-          <span class="text-festive-gold font-semibold">Day 18 Grand Reveal ⭐</span>
+          <span class="text-festive-gold font-semibold">Day 12 (Dec 11) Grand Reveal ⭐</span>
         </div>
       </div>
     </header>
 
-    <!-- PRINT HEADER ONLY (Seen when saving/printing as PDF) -->
+    <!-- PRINT HEADER ONLY -->
     <div class="print-only mb-6 text-center border-b pb-4">
-      <h1 class="text-2xl font-bold font-serif text-gray-900">My 18-Day Advent Calendar Journey</h1>
-      <p class="text-xs text-gray-600 mt-1">Completed Scavenger Hunt Proofs & Memories | Grand Reveal Edition</p>
-      <div id="printCompletionStats" class="text-xs font-semibold text-emerald-800 mt-1">18 of 18 Days Logged</div>
+      <h1 class="text-2xl font-bold font-serif text-gray-900">My 12-Day Holiday Advent Calendar</h1>
+      <p class="text-xs text-gray-600 mt-1">November 30 to December 11 • Scavenger & Activity Challenge Proofs</p>
+      <div id="printCompletionStats" class="text-xs font-semibold text-emerald-800 mt-1">12 of 12 Days Logged</div>
     </div>
 
-    <!-- Advent Calendar 18-Block Grid -->
+    <!-- 12-Day Grid -->
     <main class="flex-grow">
       <div id="calendarGrid"
-        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-5 print-grid">
-        <!-- 18 Cards will be injected dynamically -->
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 print-grid">
+        <!-- 12 Day cards rendered by JavaScript -->
       </div>
 
-      <!-- Day 18 Grand Reveal Celebration Section (Revealed when 18 completed or clicked) -->
+      <!-- Day 12 Grand Reveal Celebration Showcase -->
       <section id="revealCelebrationSection"
-        class="hidden mt-12 bg-gradient-to-b from-festive-pine/90 to-festive-emerald/60 border-2 border-festive-gold p-6 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden backdrop-blur-md">
+        class="hidden mt-12 bg-gradient-to-b from-festive-pine/95 to-festive-emerald/60 border-2 border-festive-gold p-6 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden backdrop-blur-md">
         <div class="absolute -top-12 -right-12 w-48 h-48 bg-festive-gold/10 rounded-full blur-2xl pointer-events-none">
         </div>
         <div class="text-center max-w-3xl mx-auto">
@@ -309,29 +328,29 @@
             <i class="fa-solid fa-crown animate-bounce"></i>
           </div>
           <h2 class="text-2xl sm:text-4xl font-bold font-festive text-festive-lightgold">
-            🎉 The Grand Day 18 Reveal Celebration! 🎉
+            🎉 The Grand Day 12 Reveal Celebration! 🎉
           </h2>
           <p class="text-stone-200 mt-2 text-sm sm:text-base font-light">
-            Congratulations! You've documented all 18 joyful milestones, scavenger finds, and holiday traditions. Your
-            holiday showcase is now complete and ready to print, share, or cherish!
+            You've reached December 11! All 12 days of festive memories and scavenger hunts are officially brought
+            together. Check out your complete gallery below or export your certified keepsake PDF.
           </p>
           <div class="mt-6 flex flex-wrap justify-center gap-4">
             <button onclick="triggerConfetti()"
               class="px-5 py-2.5 rounded-xl bg-festive-gold hover:bg-amber-400 text-festive-pine font-bold shadow-lg transition-transform hover:scale-105 active:scale-95 text-sm flex items-center gap-2">
-              <i class="fa-solid fa-sparkles"></i> Shoot Confetti Again!
+              <i class="fa-solid fa-sparkles"></i> Celebrate with Confetti!
             </button>
             <button onclick="triggerPrintCalendar()"
               class="px-5 py-2.5 rounded-xl bg-stone-900/80 hover:bg-black text-festive-cream font-semibold border border-festive-gold/40 shadow-lg text-sm flex items-center gap-2">
-              <i class="fa-solid fa-download"></i> Save as PDF / Print Keepsake
+              <i class="fa-solid fa-file-pdf"></i> Print / Save as PDF
             </button>
           </div>
         </div>
 
-        <!-- Collage Preview of all uploaded items -->
+        <!-- 12-Card Collage -->
         <div class="mt-8 pt-8 border-t border-festive-gold/20">
-          <h3 class="text-center text-lg font-festive text-festive-gold mb-4">Your 18-Day Visual Memory Reel</h3>
-          <div id="collageContainer" class="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
-            <!-- Thumbnails filled by JS -->
+          <h3 class="text-center text-lg font-festive text-festive-gold mb-4">Your 12-Day Visual Memory Reel</h3>
+          <div id="collageContainer" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-3">
+            <!-- Collage thumbnails rendered dynamically -->
           </div>
         </div>
       </section>
@@ -342,21 +361,19 @@
       class="mt-12 text-center text-xs text-stone-400 border-t border-festive-emerald/40 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 no-print">
       <div class="flex items-center gap-2">
         <i class="fa-solid fa-holly-berry text-festive-berry"></i>
-        <span>Festive Holiday Scavenger Calendar</span>
+
       </div>
       <div>
-        <span>All photos stored safely in your browser storage.</span>
+        <span class="text-white font-semibold">72-hour photo upload limit per unlocked day. Photos saved locally in
+          browser.</span>
       </div>
-      <button onclick="resetAllData()"
-        class="text-xs text-stone-400 hover:text-red-400 transition-colors underline decoration-dotted">
-        Reset Progress
-      </button>
+
     </footer>
   </div>
 
   <!-- Day Activity & Photo Modal Popup -->
   <div id="dayModal"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
     <div id="modalBox"
       class="bg-gradient-to-b from-[#143828] to-[#0f291e] border-2 border-festive-gold/70 rounded-3xl shadow-2xl max-w-lg w-full p-5 sm:p-7 relative text-festive-cream transform scale-95 transition-transform duration-300 overflow-y-auto max-h-[92vh]">
 
@@ -366,23 +383,34 @@
         <i class="fa-solid fa-xmark text-lg"></i>
       </button>
 
-      <!-- Modal Day Badge -->
+      <!-- Day Badge & Date -->
       <div class="flex items-center gap-3 mb-4">
         <span id="modalDayNumberBadge"
           class="bg-gradient-to-br from-festive-gold to-amber-600 text-festive-pine font-black text-lg px-3 py-1 rounded-xl shadow-md font-mono">
           Day 01
         </span>
         <div>
-          <span id="modalDayStatus"
-            class="text-xs font-semibold tracking-wider uppercase text-emerald-400 flex items-center gap-1">
-            <i class="fa-solid fa-lock-open text-[10px]"></i> Unlocked Activity
-          </span>
-          <p id="modalCategory" class="text-xs text-festive-lightgold/80 font-medium">Holiday Scavenger Hunt</p>
+          <span id="modalDateLabel" class="text-xs text-festive-lightgold font-bold block">Nov 30</span>
+          <div id="modalStatusBadge"
+            class="text-xs font-semibold tracking-wide uppercase flex items-center gap-1 mt-0.5">
+            <!-- Filled dynamically -->
+          </div>
         </div>
+      </div>
+
+      <!-- Expiration Warning Banner (if within 72h or expired) -->
+      <div id="modalTimeRemainingBanner"
+        class="hidden mb-4 p-2.5 rounded-xl text-xs font-medium flex items-center gap-2">
+        <!-- Rendered by JS -->
       </div>
 
       <!-- Activity Title & Description -->
       <div class="mb-5 bg-stone-900/60 p-4 rounded-2xl border border-festive-gold/30">
+        <div class="flex items-center justify-between mb-1">
+          <span id="modalCategory"
+            class="text-[11px] font-semibold uppercase tracking-wider text-festive-gold/90">Scavenger Find</span>
+          <span id="modalIconContainer" class="text-festive-gold text-sm"></span>
+        </div>
         <h3 id="modalTaskTitle" class="text-lg sm:text-xl font-bold font-festive text-festive-lightgold mb-1">
           Activity Title
         </h3>
@@ -391,15 +419,15 @@
         </p>
       </div>
 
-      <!-- Photo Proof Upload Box -->
+      <!-- Photo Proof Section -->
       <div class="mb-5">
         <label
           class="block text-xs font-bold uppercase tracking-wider text-festive-gold mb-2 flex items-center justify-between">
-          <span><i class="fa-solid fa-camera mr-1"></i> Add Photo Proof</span>
-          <span class="text-[11px] text-stone-300 font-normal">PNG, JPG, or WEBP</span>
+          <span><i class="fa-solid fa-camera mr-1"></i> Photo Proof</span>
+          <span id="photoStatusHelper" class="text-[11px] text-stone-300 font-normal">72-hour window</span>
         </label>
 
-        <!-- Drop/Select Area (shown when no photo) -->
+        <!-- Drop/Select Area (Active when uploads allowed) -->
         <div id="dropZone"
           class="border-2 border-dashed border-festive-gold/40 hover:border-festive-gold rounded-2xl p-5 text-center cursor-pointer transition-all bg-stone-900/40 hover:bg-festive-emerald/20 group">
           <input type="file" id="photoFileInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)" />
@@ -409,20 +437,30 @@
               <i class="fa-solid fa-cloud-arrow-up"></i>
             </div>
             <p class="text-sm font-semibold text-stone-200">Tap to browse or drop photo proof</p>
-            <p class="text-xs text-stone-400 mt-1">Proof that you found the item or did the event</p>
+            <p class="text-xs text-stone-400 mt-1">Must be uploaded within 72 hours of day unlock</p>
           </div>
         </div>
 
-        <!-- Photo Preview Area (shown when photo is present) -->
+        <!-- Expired Block Notice (Shown when 72h window passed and no photo) -->
+        <div id="uploadExpiredNotice" class="hidden p-4 rounded-2xl bg-red-950/40 border border-red-800/60 text-center">
+          <i class="fa-solid fa-lock text-red-400 text-2xl mb-2"></i>
+          <h4 class="text-sm font-bold text-red-300">Photo Upload Window Expired</h4>
+          <p class="text-xs text-stone-300 mt-1">
+            More than 72 hours have elapsed since this challenge unlocked. New photo proofs cannot be added to past
+            dates.
+          </p>
+        </div>
+
+        <!-- Photo Preview Area -->
         <div id="photoPreviewContainer"
-          class="hidden relative rounded-2xl overflow-hidden border border-festive-gold/60 shadow-lg bg-black">
+          class="hidden relative rounded-2xl overflow-hidden border border-festive-gold/60 shadow-lg bg-black mt-2">
           <img id="photoPreviewImg" src="" alt="Proof Preview" class="w-full h-48 sm:h-56 object-cover" />
           <div
             class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-3 flex justify-between items-center">
             <span class="text-xs text-emerald-400 font-medium flex items-center gap-1">
-              <i class="fa-solid fa-circle-check"></i> Photo Proof Ready
+              <i class="fa-solid fa-circle-check"></i> Photo Proof Saved
             </span>
-            <div class="flex gap-2">
+            <div id="photoActionButtons" class="flex gap-2">
               <button type="button" onclick="document.getElementById('photoFileInput').click()"
                 class="text-xs bg-stone-800 hover:bg-stone-700 text-festive-lightgold px-2.5 py-1 rounded-lg border border-festive-gold/30">
                 Replace
@@ -436,13 +474,13 @@
         </div>
       </div>
 
-      <!-- Optional User Note / Memory -->
+      <!-- Optional User Note -->
       <div class="mb-6">
         <label for="userNoteInput"
           class="block text-xs font-bold uppercase tracking-wider text-stone-300 mb-1.5 flex items-center gap-1.5">
-          <i class="fa-solid fa-feather"></i> Memory / Note (Optional)
+          <i class="fa-solid fa-feather"></i> Memory / Reflection (Optional)
         </label>
-        <textarea id="userNoteInput" rows="2" placeholder="Write a quick memory, timestamp, or who was with you..."
+        <textarea id="userNoteInput" rows="2" placeholder="Record a small memory, who was there, or a funny story..."
           class="w-full bg-stone-900/70 border border-stone-700 focus:border-festive-gold rounded-xl px-3 py-2 text-sm text-stone-200 placeholder-stone-500 focus:outline-none transition-colors resize-none"></textarea>
       </div>
 
@@ -450,12 +488,12 @@
       <div class="flex items-center justify-end gap-3 pt-2 border-t border-stone-800">
         <button type="button" onclick="closeDayModal()"
           class="px-4 py-2.5 rounded-xl border border-stone-600 text-stone-300 hover:bg-stone-800 text-sm font-semibold transition-colors">
-          Cancel
+          Close
         </button>
         <button type="button" onclick="saveDayEntry()" id="btnSaveModal"
           class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-festive-gold to-amber-500 hover:from-amber-400 hover:to-amber-500 text-festive-pine text-sm font-bold shadow-lg transition-transform hover:scale-102 active:scale-98 flex items-center gap-2">
           <i class="fa-solid fa-check"></i>
-          <span>Save & Mark Complete</span>
+          <span>Save Entry</span>
         </button>
       </div>
 
@@ -464,7 +502,7 @@
 
   <!-- Admin Login Modal -->
   <div id="adminModal"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
     <div id="adminModalBox"
       class="bg-gradient-to-b from-[#173024] to-[#0d1e16] border-2 border-festive-gold/60 rounded-3xl shadow-2xl max-w-sm w-full p-6 relative text-festive-cream transform scale-95 transition-transform duration-300">
       <button onclick="closeAdminModal()"
@@ -477,24 +515,24 @@
           class="w-12 h-12 rounded-2xl bg-festive-gold/20 text-festive-gold border border-festive-gold/40 flex items-center justify-center text-xl mx-auto mb-3 shadow">
           <i class="fa-solid fa-shield-halved"></i>
         </div>
-        <h3 class="text-xl font-bold font-festive text-festive-lightgold">Admin Authentication</h3>
-        <p class="text-xs text-stone-300 mt-1">Enter admin password or PIN to unlock all calendar controls.</p>
+        <h3 class="text-xl font-bold font-festive text-festive-lightgold">Admin Authorization</h3>
+        <p class="text-xs text-stone-300 mt-1">Enter admin credentials to bypass 72h rules or test any calendar day.</p>
       </div>
 
       <form onsubmit="handleAdminLoginSubmit(event)" class="space-y-4">
         <div>
           <label for="adminPasswordInput"
-            class="block text-xs font-semibold text-stone-300 uppercase tracking-wider mb-1.5">Admin Password</label>
-          <input type="password" id="adminPasswordInput" placeholder="Enter password (advent2026)"
+            class="block text-xs font-semibold text-stone-300 uppercase tracking-wider mb-1.5">Password</label>
+          <input type="password" id="adminPasswordInput" placeholder="Enter password"
             class="w-full bg-stone-900/90 border border-stone-700 focus:border-festive-gold rounded-xl px-3.5 py-2.5 text-sm text-stone-100 placeholder-stone-500 focus:outline-none transition-colors"
             autocomplete="current-password" required />
-          <p class="text-[11px] text-stone-400 mt-1.5">Default password: <code
-              class="text-festive-lightgold">advent2026</code></p>
+          <p class="text-[11px] text-stone-400 mt-1.5">Password: <code class="text-festive-lightgold font-mono"></code>
+          </p>
         </div>
 
         <div id="adminLoginError"
           class="hidden text-xs text-red-400 bg-red-950/50 border border-red-800/60 p-2 rounded-lg text-center">
-          Incorrect password. Please try again.
+          Incorrect admin password.
         </div>
 
         <div class="flex gap-2 pt-2">
@@ -504,7 +542,7 @@
           </button>
           <button type="submit"
             class="w-1/2 py-2.5 rounded-xl bg-festive-gold hover:bg-amber-400 text-stone-950 text-sm font-bold shadow transition-all">
-            Unlock
+            Login
           </button>
         </div>
       </form>
@@ -523,169 +561,154 @@
   <!-- Script Logic -->
   <script>
     /* ==========================================================================
-       18 DAYS SCAVENGER & ACTIVITY DATA DEFINITION
+      12 DAYS DATA DEFINITION: NOV 30 - DEC 11
        ========================================================================== */
-    const ADVENT_TASKS = [
+    const ADVENT_TASKS_12 = [
       {
         day: 1,
-        title: "Cozy Holiday Socks",
-        category: "Scavenger Find",
-        desc: "Find and put on the coziest, warmest, or most festive pair of holiday socks you own! Take a photo of your cozy feet.",
-        icon: "fa-socks"
-      },
-      {
-        day: 2,
+        dateStr: "Nov 30",
+        // Month is 0-indexed in JS: Nov is 10, Dec is 11
+        unlockDate: { month: 10, day: 30 },
         title: "Warm Festive Treat",
         category: "Holiday Activity",
         desc: "Bake, buy, or enjoy a warm holiday treat (cinnamon roll, gingerbread, fresh cookie, or pastry). Capture a photo before the first bite!",
         icon: "fa-cookie-bite"
       },
       {
-        day: 3,
-        title: "Find a Red Ornament",
-        category: "Scavenger Find",
-        desc: "Search around your home or neighborhood tree for a shiny or handmade red ornament. Snap a close-up photo.",
-        icon: "fa-tree"
-      },
-      {
-        day: 4,
-        title: "Steaming Mug of Cheer",
-        category: "Holiday Activity",
-        desc: "Prepare a warm mug of hot cocoa, spiced cider, or holiday tea topped with marshmallows or whipped cream. Photo your festive mug!",
-        icon: "fa-mug-hot"
-      },
-      {
-        day: 5,
-        title: "Festive Pinecone or Pine Needles",
-        category: "Scavenger Find",
-        desc: "Find a pinecone, evergreen sprig, or cinnamon-scented pine decoration outside or inside.",
-        icon: "fa-seedling"
-      },
-      {
-        day: 6,
-        title: "Send a Cheerful Greeting",
-        category: "Holiday Activity",
-        desc: "Write a holiday postcard, note, or send a warm appreciative text message to a dear friend or family member. Snap the card or message screen.",
-        icon: "fa-envelope-open-text"
-      },
-      {
-        day: 7,
-        title: "Sparkling Holiday Lights",
-        category: "Scavenger Find",
-        desc: "Locate twinkling fairy lights, balcony lights, or neighborhood holiday displays glowing brightly in the dark.",
-        icon: "fa-lightbulb"
-      },
-      {
-        day: 8,
-        title: "Holiday Hat or Headband",
-        category: "Holiday Activity",
-        desc: "Put on a Santa hat, reindeer antlers, winter beanie, or festive headband for a cheerful quick snapshot.",
-        icon: "fa-hat-wizard"
-      },
-      {
-        day: 9,
-        title: "Find a Golden Bell or Star",
-        category: "Scavenger Find",
-        desc: "Find a golden jingle bell, tree topper star, or golden ribbon bow.",
-        icon: "fa-bell"
-      },
-      {
-        day: 10,
-        title: "Listen to a Favorite Carol",
-        category: "Holiday Activity",
-        desc: "Put on your all-time favorite holiday song or album. Snap a photo of your music player, vinyl, or speaker in action.",
-        icon: "fa-music"
-      },
-      {
-        day: 11,
+        day: 2,
+        dateStr: "Dec 01",
+        unlockDate: { month: 11, day: 1 },
         title: "Striped Candy Cane",
         category: "Scavenger Find",
         desc: "Hunt down a peppermint candy cane or festive peppermint confection.",
         icon: "fa-candy-cane"
       },
       {
-        day: 12,
-        title: "Wrap a Gift or Present Box",
-        category: "Holiday Activity",
-        desc: "Wrap a present, gift bag, or tie a pretty ribbon around a gift for someone special.",
-        icon: "fa-gift"
-      },
-      {
-        day: 13,
-        title: "A Snowman or Snowflake",
+        day: 3,
+        dateStr: "Dec 02",
+        unlockDate: { month: 11, day: 2 },
+        title: "Sparkling Holiday Lights",
         category: "Scavenger Find",
-        desc: "Find a snowman figure, real outdoor snow sculpture, paper snowflake cutout, or snowflake pattern on a window.",
-        icon: "fa-snowflake"
+        desc: "Locate twinkling fairy lights, balcony lights, or neighborhood holiday displays glowing brightly in the dark.",
+        icon: "fa-lightbulb"
       },
       {
-        day: 14,
+        day: 4,
+        dateStr: "Dec 03",
+        unlockDate: { month: 11, day: 3 },
         title: "Candlelight Glow",
         category: "Holiday Activity",
         desc: "Light a cozy scented candle (pine, vanilla, or cinnamon) or an LED candle to bring warmth to your room.",
         icon: "fa-fire"
       },
       {
-        day: 15,
-        title: "Cute Holiday Creature",
+        day: 5,
+        dateStr: "Dec 04",
+        unlockDate: { month: 11, day: 4 },
+        title: "Cozy Holiday Socks / Slippers",
         category: "Scavenger Find",
-        desc: "Spot a reindeer decoration, holiday bird (robin/cardinal), polar bear figurine, or your pet in a festive mood!",
-        icon: "fa-paw"
+        desc: "Find and put on the coziest, warmest, or most festive pair of holiday socks or slippers you own! Take a photo of your cozy feet.",
+        icon: "fa-socks"
       },
       {
-        day: 16,
+        day: 6,
+        dateStr: "Dec 05",
+        unlockDate: { month: 11, day: 5 },
+        title: "Wrap a Gift or Present Box",
+        category: "Holiday Activity",
+        desc: "Wrap a present, gift bag, or tie a pretty ribbon around a gift for someone special.",
+        icon: "fa-gift"
+      },
+      {
+        day: 7,
+        dateStr: "Dec 06",
+        unlockDate: { month: 11, day: 6 },
+        title: "A Snowman or Snowflake",
+        category: "Scavenger Find",
+        desc: "Find a snowman figure, real outdoor snow sculpture, paper snowflake cutout, or snowflake pattern on a window.",
+        icon: "fa-snowflake"
+      },
+      {
+        day: 8,
+        dateStr: "Dec 07",
+        unlockDate: { month: 11, day: 7 },
+        title: "Send a Cheerful Greeting",
+        category: "Holiday Activity",
+        desc: "Write a holiday postcard, note, or send a warm appreciative text message to a dear friend or family member. Snap the card or message screen.",
+        icon: "fa-envelope-open-text"
+      },
+      {
+        day: 9,
+        dateStr: "Dec 08",
+        unlockDate: { month: 11, day: 8 },
+        title: "Listen to a Favorite Carol",
+        category: "Holiday Activity",
+        desc: "Put on your all-time favorite holiday song or album. Snap a photo of your music player, vinyl, or speaker in action.",
+        icon: "fa-music"
+      },
+      {
+        day: 10,
+        dateStr: "Dec 09",
+        unlockDate: { month: 11, day: 9 },
+        title: "Steaming Mug of Cheer",
+        category: "Holiday Activity",
+        desc: "Prepare a warm mug of hot cocoa, spiced cider, or holiday tea topped with marshmallows or whipped cream. Photo your festive mug!",
+        icon: "fa-mug-hot"
+      },
+      {
+        day: 11,
+        dateStr: "Dec 10",
+        unlockDate: { month: 11, day: 10 },
         title: "Read a Holiday Story or Poem",
         category: "Holiday Activity",
         desc: "Spend 10 minutes reading a classic winter tale, holiday poem, or children's book. Photograph the page or cover.",
         icon: "fa-book-open"
       },
       {
-        day: 17,
-        title: "Spiced Cinnamon or Winter Scent",
-        category: "Scavenger Find",
-        desc: "Find cinnamon sticks, orange cloves, or holiday potpourri that fills the air with nostalgia.",
-        icon: "fa-mortar-pestle"
-      },
-      {
-        day: 18,
-        title: "Grand Reveal Day: The Victory Celebration!",
-        category: "Grand Finale",
-        desc: "The 18th Day of Reveal! Take a victory selfie or group celebration photo showing your holiday spirit and celebrating finishing the 18 days!",
-        icon: "fa-champagne-glasses"
+        day: 12,
+        dateStr: "Dec 11",
+        unlockDate: { month: 11, day: 11 },
+        title: "Holiday Hat or Headband (Grand Finale)",
+        category: "Holiday Activity",
+        desc: "Put on a Santa hat, reindeer antlers, winter beanie, or festive headband for a cheerful quick snapshot. The grand 12th day finale!",
+        icon: "fa-hat-wizard"
       }
     ];
 
     /* ==========================================================================
-       APPLICATION STATE & LOCAL STORAGE
+      APPLICATION CONSTANTS & STATE
        ========================================================================== */
-    const STORAGE_KEY = 'advent_calendar_data_v1';
-    const DEMO_MODE_KEY = 'advent_demo_unlock_all';
+    const STORAGE_KEY = 'advent_12day_data_v2';
     const ADMIN_AUTH_KEY = 'advent_admin_authenticated';
-    const VALID_ADMIN_PASSWORDS = ['advent2026'];
+    const ADMIN_BYPASS_KEY = 'advent_admin_bypass_locks';
+    const ADMIN_SIM_DATE_KEY = 'advent_admin_sim_date';
+    const VALID_ADMIN_PASSWORD = 'advent2026';
+    const WINDOW_HOURS = 72; // 72-hour photo upload limit
 
-    // State schema: { 1: { completed: true, photo: 'data:image/...', note: '...' }, ... }
     let calendarState = {};
-    let isDemoUnlockedAll = false;
     let isAdminLoggedIn = false;
+    let isAdminBypassEnabled = false;
+    let simulatedDateSetting = 'REAL'; // 'REAL' or 'YYYY-MM-DD'
+
     let activeDayNumber = null;
     let tempUploadedPhotoBase64 = null;
 
-    // Initialize application
+    /* ==========================================================================
+      INITIALIZATION
+       ========================================================================== */
     window.addEventListener('DOMContentLoaded', () => {
       loadState();
       createSnow();
       renderAdminUI();
       renderCalendar();
       updateProgress();
-      checkAllRevealedState();
 
-      // Setup dropZone click trigger
+      // Drag and drop setup for file dropzone
       const dropZone = document.getElementById('dropZone');
       if (dropZone) {
         dropZone.addEventListener('click', () => {
           document.getElementById('photoFileInput').click();
         });
-
-        // Drag and drop handlers
         ['dragenter', 'dragover'].forEach(eventName => {
           dropZone.addEventListener(eventName, (e) => {
             e.preventDefault();
@@ -705,31 +728,36 @@
         });
       }
 
-      // Demo toggle switch listener
-      const toggle = document.getElementById('demoModeToggle');
-      if (toggle) {
-        toggle.checked = isDemoUnlockedAll;
-        toggle.addEventListener('change', (e) => {
-          isDemoUnlockedAll = e.target.checked;
-          localStorage.setItem(DEMO_MODE_KEY, isDemoUnlockedAll ? 'true' : 'false');
-          showToast(isDemoUnlockedAll ? "Preview Mode: All 18 Days Unlocked!" : "Simulated Date Unlock Mode Enabled");
+      // Bypass toggle listener
+      const bypassToggle = document.getElementById('adminBypassToggle');
+      if (bypassToggle) {
+        bypassToggle.checked = isAdminBypassEnabled;
+        bypassToggle.addEventListener('change', (e) => {
+          isAdminBypassEnabled = e.target.checked;
+          localStorage.setItem(ADMIN_BYPASS_KEY, isAdminBypassEnabled ? 'true' : 'false');
+          showToast(isAdminBypassEnabled ? "Admin Bypass: All 12 days unlocked and 72h limit disabled" : "Real date & 72h expiration rules restored");
           renderCalendar();
         });
       }
+
+      // Refresh countdown states every minute
+      setInterval(() => {
+        renderCalendar();
+      }, 60000);
     });
 
     function loadState() {
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
         calendarState = saved ? JSON.parse(saved) : {};
-        const savedDemo = localStorage.getItem(DEMO_MODE_KEY);
-        isDemoUnlockedAll = savedDemo === 'true';
+        isAdminLoggedIn = localStorage.getItem(ADMIN_AUTH_KEY) === 'true';
+        isAdminBypassEnabled = localStorage.getItem(ADMIN_BYPASS_KEY) === 'true';
+        simulatedDateSetting = localStorage.getItem(ADMIN_SIM_DATE_KEY) || 'REAL';
 
-        // Admin session persistence
-        const adminAuth = localStorage.getItem(ADMIN_AUTH_KEY);
-        isAdminLoggedIn = adminAuth === 'true';
+        const simSelect = document.getElementById('adminSimulatedDateSelect');
+        if (simSelect) simSelect.value = simulatedDateSetting;
       } catch (err) {
-        console.error("Error loading state:", err);
+        console.error("State loading error:", err);
         calendarState = {};
       }
     }
@@ -738,33 +766,65 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(calendarState));
       } catch (err) {
-        console.warn("Storage quota may be reached or local storage disabled:", err);
-        showToast("Storage quota warning: consider smaller photos", true);
+        console.warn("Storage quota warning:", err);
+        showToast("Storage quota warning: please use smaller photos", true);
       }
     }
 
     /* ==========================================================================
-       DATE LOGIC & UNLOCKING
+      DATE & 72-HOUR WINDOW LOGIC
        ========================================================================== */
-    function isDayUnlocked(dayNumber) {
-      if (isDemoUnlockedAll) return true;
-
-      // Realistic December Date Unlocker:
-      // If today is December, day <= current December date is unlocked.
-      // If outside December or earlier, let Days 1-3 be accessible or based on current month day.
-      const now = new Date();
-      const currentMonth = now.getMonth(); // 11 is December
-      const currentDay = now.getDate();
-
-      if (currentMonth === 11) { // December
-        return dayNumber <= currentDay;
-      } else {
-        return dayNumber <= 3;
+    function getCurrentEvaluationDate() {
+      if (isAdminLoggedIn && simulatedDateSetting !== 'REAL') {
+        const [year, month, day] = simulatedDateSetting.split('-').map(Number);
+        // Set simulated date to midday 12:00:00 to simulate that day in progress
+        return new Date(year, month - 1, day, 12, 0, 0);
       }
+      return new Date();
+    }
+
+    // Returns exact unlock Timestamp for a day in the target season
+    function getDayUnlockDate(task, currentYear) {
+      const year = currentYear;
+      // Start of the day at 00:00:00 local time
+      return new Date(year, task.unlockDate.month, task.unlockDate.day, 0, 0, 0);
+    }
+
+    function getDayTimeStatus(dayNumber) {
+      const task = ADVENT_TASKS_12.find(t => t.day === dayNumber);
+      if (!task) return { isUnlocked: false, isPhotoWindowOpen: false, hoursLeft: 0 };
+
+      if (isAdminBypassEnabled) {
+        return {
+          isUnlocked: true,
+          isPhotoWindowOpen: true,
+          hoursLeft: 72,
+          isBypassed: true
+        };
+      }
+
+      const now = getCurrentEvaluationDate();
+      const currentYear = now.getFullYear();
+      const unlockTime = getDayUnlockDate(task, currentYear);
+      const expirationTime = new Date(unlockTime.getTime() + (WINDOW_HOURS * 60 * 60 * 1000));
+
+      const isUnlocked = now >= unlockTime;
+      const msLeft = expirationTime.getTime() - now.getTime();
+      const hoursLeft = Math.max(0, Math.floor(msLeft / (1000 * 60 * 60)));
+      const isPhotoWindowOpen = isUnlocked && (now <= expirationTime);
+
+      return {
+        isUnlocked,
+        isPhotoWindowOpen,
+        hoursLeft,
+        unlockTime,
+        expirationTime,
+        isBypassed: false
+      };
     }
 
     /* ==========================================================================
-       ADMIN AUTHENTICATION & UI VISIBILITY
+      ADMIN FUNCTIONS
        ========================================================================== */
     function openAdminModal() {
       const modal = document.getElementById('adminModal');
@@ -795,17 +855,17 @@
       }, 250);
     }
 
-    function handleAdminLoginSubmit(event) {
-      event.preventDefault();
+    function handleAdminLoginSubmit(e) {
+      e.preventDefault();
       const input = document.getElementById('adminPasswordInput').value.trim();
       const errorMsg = document.getElementById('adminLoginError');
 
-      if (VALID_ADMIN_PASSWORDS.includes(input)) {
+      if (input === VALID_ADMIN_PASSWORD) {
         isAdminLoggedIn = true;
         localStorage.setItem(ADMIN_AUTH_KEY, 'true');
         closeAdminModal();
         renderAdminUI();
-        showToast("Admin access granted! 'Unlock All' is now available.");
+        showToast("Admin access granted: advent2026");
       } else {
         errorMsg.classList.remove('hidden');
       }
@@ -813,28 +873,37 @@
 
     function handleAdminLogout() {
       isAdminLoggedIn = false;
-      isDemoUnlockedAll = false;
+      isAdminBypassEnabled = false;
+      simulatedDateSetting = 'REAL';
       localStorage.removeItem(ADMIN_AUTH_KEY);
-      localStorage.setItem(DEMO_MODE_KEY, 'false');
+      localStorage.removeItem(ADMIN_BYPASS_KEY);
+      localStorage.removeItem(ADMIN_SIM_DATE_KEY);
 
-      const toggle = document.getElementById('demoModeToggle');
-      if (toggle) toggle.checked = false;
+      const bypassToggle = document.getElementById('adminBypassToggle');
+      if (bypassToggle) bypassToggle.checked = false;
 
       renderAdminUI();
       renderCalendar();
       showToast("Logged out of Admin mode.");
     }
 
+    function handleSimulatedDateChange(event) {
+      simulatedDateSetting = event.target.value;
+      localStorage.setItem(ADMIN_SIM_DATE_KEY, simulatedDateSetting);
+      renderCalendar();
+      showToast(`Simulating calendar on: ${simulatedDateSetting === 'REAL' ? 'Current Real Date' : simulatedDateSetting}`);
+    }
+
     function renderAdminUI() {
       const adminControls = document.getElementById('adminPanelControls');
       const loginTriggerBtn = document.getElementById('btnAdminLoginTrigger');
-      const toggle = document.getElementById('demoModeToggle');
+      const bypassToggle = document.getElementById('adminBypassToggle');
 
       if (isAdminLoggedIn) {
         adminControls.classList.remove('hidden');
         adminControls.classList.add('flex');
         loginTriggerBtn.classList.add('hidden');
-        if (toggle) toggle.checked = isDemoUnlockedAll;
+        if (bypassToggle) bypassToggle.checked = isAdminBypassEnabled;
       } else {
         adminControls.classList.add('hidden');
         adminControls.classList.remove('flex');
@@ -843,122 +912,161 @@
     }
 
     /* ==========================================================================
-       RENDER CALENDAR GRID
+      RENDER 12-DAY GRID
        ========================================================================== */
     function renderCalendar() {
       const grid = document.getElementById('calendarGrid');
       grid.innerHTML = '';
 
-      ADVENT_TASKS.forEach((task) => {
+      ADVENT_TASKS_12.forEach((task) => {
         const entry = calendarState[task.day] || { completed: false, photo: null, note: '' };
-        const unlocked = isDayUnlocked(task.day);
-        const isDay18 = task.day === 18;
+        const status = getDayTimeStatus(task.day);
+        const isDay12 = task.day === 12;
 
         const card = document.createElement('div');
-        card.className = `group relative rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 select-none overflow-hidden cursor-pointer print-card ${entry.completed
-            ? 'bg-gradient-to-b from-stone-900/90 to-festive-darkgreen/90 border-2 border-emerald-500/80 shadow-lg'
-            : unlocked
-              ? isDay18
-                ? 'bg-gradient-to-br from-festive-crimson/80 via-festive-pine/90 to-amber-950/80 border-2 border-festive-gold ready-glow shadow-xl hover:-translate-y-1'
-                : 'bg-festive-pine/80 border border-festive-gold/50 ready-glow hover:border-festive-gold shadow-md hover:-translate-y-1'
-              : 'bg-stone-950/60 border border-stone-800/80 opacity-75 cursor-not-allowed hover:border-stone-700'
-          }`;
 
-        // Print header inside card
+        // Base styling depending on state
+        let cardBgClass = '';
+        if (entry.completed && entry.photo) {
+          cardBgClass = 'bg-stone-900/90 border-2 border-emerald-500/80 shadow-lg';
+        } else if (entry.completed && !entry.photo) {
+          cardBgClass = 'bg-festive-darkgreen/80 border border-emerald-500/50 shadow-md';
+        } else if (!status.isUnlocked) {
+          cardBgClass = 'bg-stone-950/60 border border-stone-800/80 opacity-70 cursor-not-allowed';
+        } else if (status.isUnlocked && !status.isPhotoWindowOpen) {
+          // Expired (unlocked past 72h without photo)
+          cardBgClass = 'bg-stone-900/70 border border-red-800/40 hover:border-red-600/70 opacity-90';
+        } else {
+          // Open & Active
+          cardBgClass = isDay12
+            ? 'bg-gradient-to-br from-festive-crimson/80 via-festive-pine/90 to-amber-950/80 border-2 border-festive-gold active-glow shadow-xl hover:-translate-y-1'
+            : 'bg-festive-pine/80 border border-festive-gold/60 active-glow hover:border-festive-gold shadow-md hover:-translate-y-1';
+        }
+
+        card.className = `group relative rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 select-none overflow-hidden cursor-pointer print-card ${cardBgClass}`;
+
+        // Printable card header
         const printInfo = `
           <div class="print-only mb-1 border-b pb-1">
             <div class="flex justify-between items-center text-xs font-bold text-gray-800">
-              <span>Day ${task.day}: ${escapeHtml(task.title)}</span>
+              <span>Day ${task.day} (${task.dateStr}): ${escapeHtml(task.title)}</span>
               <span>${entry.completed ? '✓ Completed' : 'Pending'}</span>
             </div>
-            <p class="text-[9px] text-gray-600">${escapeHtml(task.desc)}</p>
+            <p class="text-[9.5px] text-gray-600">${escapeHtml(task.desc)}</p>
           </div>
         `;
 
-        // Card Inner HTML
         let innerHTML = printInfo;
 
+        // Visual Badge Logic
+        let badgeHtml = '';
+        if (entry.completed) {
+          badgeHtml = `
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-600/60 text-[10px] font-semibold">
+              <i class="fa-solid fa-circle-check text-[9px]"></i> Proof Added
+            </span>
+          `;
+        } else if (!status.isUnlocked) {
+          badgeHtml = `
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-900 text-stone-400 border border-stone-700 text-[10px] font-medium">
+              <i class="fa-solid fa-lock text-[9px]"></i> Opens ${task.dateStr}
+            </span>
+          `;
+        } else if (status.isUnlocked && !status.isPhotoWindowOpen) {
+          badgeHtml = `
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-950 text-red-300 border border-red-800/80 text-[10px] font-medium">
+              <i class="fa-solid fa-clock-rotate-left text-[9px]"></i> 72h Window Expired
+            </span>
+          `;
+        } else {
+          badgeHtml = `
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-950/90 text-amber-300 border border-amber-500/60 text-[10px] font-bold animate-pulse">
+              <i class="fa-regular fa-clock text-[9px]"></i> ${status.hoursLeft}h left to upload
+            </span>
+          `;
+        }
+
+        // Card Content Construction
         if (entry.completed && entry.photo) {
-          // COMPLETED STATE WITH PHOTO
+          // Has photo proof
           innerHTML += `
-            <div class="relative w-full h-28 sm:h-32 rounded-xl overflow-hidden mb-3 border border-emerald-500/40">
+            <div class="relative w-full h-32 sm:h-36 rounded-xl overflow-hidden mb-3 border border-emerald-500/40">
               <img src="${entry.photo}" alt="Day ${task.day} proof" class="w-full h-full object-cover transition-transform group-hover:scale-105 print-img" />
-              <div class="absolute top-2 right-2 bg-emerald-700 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow flex items-center gap-1 no-print">
-                <i class="fa-solid fa-check text-[10px]"></i> Done
+              <div class="absolute top-2 right-2 bg-emerald-700 text-white text-[11px] px-2 py-0.5 rounded-full font-bold shadow flex items-center gap-1 no-print">
+                <i class="fa-solid fa-check text-[9px]"></i> Done
               </div>
-              <div class="absolute bottom-1 left-2 text-[10px] text-white/90 drop-shadow no-print">
-                <i class="fa-solid fa-camera"></i> Photo Proof
+              <div class="absolute top-2 left-2 bg-black/60 text-festive-lightgold font-mono text-[11px] px-2 py-0.5 rounded-md no-print">
+                Day ${task.day} • ${task.dateStr}
               </div>
             </div>
             <div class="flex items-center justify-between no-print">
               <div>
-                <span class="text-xs text-festive-gold font-bold">Day ${task.day}</span>
-                <h4 class="text-xs font-semibold text-stone-100 truncate max-w-[120px] sm:max-w-[150px]">${escapeHtml(task.title)}</h4>
+                <h4 class="text-xs font-semibold text-stone-100 truncate max-w-[150px] sm:max-w-[180px]">${escapeHtml(task.title)}</h4>
+                <p class="text-[10px] text-stone-400">${escapeHtml(task.category)}</p>
               </div>
               <span class="text-xs text-emerald-400 hover:text-emerald-300 underline font-medium">View</span>
             </div>
           `;
-        } else if (entry.completed && !entry.photo) {
-          // COMPLETED WITHOUT PHOTO
+        } else if (status.isUnlocked) {
+          // Unlocked (either active within 72h OR expired without photo)
           innerHTML += `
-            <div class="flex flex-col items-center justify-center py-6 text-center">
-              <div class="w-12 h-12 rounded-full bg-emerald-900/60 text-emerald-400 border border-emerald-500/40 flex items-center justify-center text-xl mb-2">
-                <i class="fa-solid fa-check-double"></i>
+            <div class="flex items-start justify-between no-print mb-2">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl ${isDay12 ? 'bg-gradient-to-tr from-amber-400 to-festive-gold text-stone-900 font-black' : 'bg-festive-emerald/70 text-festive-lightgold font-bold border border-festive-gold/40'} flex items-center justify-center font-mono text-xs shadow">
+                  ${task.day}
+                </span>
+                <span class="text-xs font-semibold text-festive-lightgold">${task.dateStr}</span>
               </div>
-              <span class="text-xs font-bold text-festive-gold">Day ${task.day}</span>
-              <h4 class="text-xs font-semibold text-stone-200 mt-0.5">${escapeHtml(task.title)}</h4>
-              <span class="text-[10px] text-emerald-400 mt-1">Completed!</span>
+              ${badgeHtml}
             </div>
-          `;
-        } else if (unlocked) {
-          // UNLOCKED READY STATE
-          innerHTML += `
-            <div class="flex items-start justify-between no-print">
-              <span class="w-9 h-9 rounded-xl ${isDay18 ? 'bg-gradient-to-tr from-amber-400 to-festive-gold text-stone-900 font-black' : 'bg-festive-emerald/70 text-festive-lightgold font-bold border border-festive-gold/40'} flex items-center justify-center font-mono text-sm shadow">
-                ${task.day}
-              </span>
-              <span class="text-xs ${isDay18 ? 'text-amber-300 font-bold animate-pulse' : 'text-festive-gold/80'}">
-                ${isDay18 ? '<i class="fa-solid fa-crown mr-1"></i>Grand Reveal' : '<i class="fa-solid fa-gift"></i>'}
-              </span>
-            </div>
-            <div class="my-4 no-print">
-              <div class="w-10 h-10 rounded-full mx-auto ${isDay18 ? 'bg-festive-crimson/50 text-amber-300' : 'bg-festive-gold/10 text-festive-gold'} flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition-transform">
+
+            <div class="my-3 text-center no-print">
+              <div class="w-10 h-10 rounded-full mx-auto ${isDay12 ? 'bg-festive-crimson/50 text-amber-300' : 'bg-festive-gold/10 text-festive-gold'} flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition-transform">
                 <i class="fa-solid ${task.icon}"></i>
               </div>
-              <h4 class="text-center font-bold text-xs sm:text-sm text-stone-100 group-hover:text-festive-lightgold transition-colors line-clamp-1">
+              <h4 class="font-bold text-xs sm:text-sm text-stone-100 group-hover:text-festive-lightgold transition-colors line-clamp-1">
                 ${escapeHtml(task.title)}
               </h4>
               <p class="text-[11px] text-stone-300 text-center mt-1 font-light line-clamp-2">
                 ${escapeHtml(task.desc)}
               </p>
             </div>
-            <div class="text-center pt-2 border-t border-festive-gold/20 no-print">
-              <span class="inline-block text-[11px] font-semibold text-festive-gold group-hover:translate-x-0.5 transition-transform">
-                Open Day ${task.day} <i class="fa-solid fa-chevron-right text-[9px] ml-0.5"></i>
+
+            <div class="pt-2 border-t border-festive-gold/20 flex items-center justify-between text-[11px] no-print">
+              <span class="text-stone-400">${escapeHtml(task.category)}</span>
+              <span class="font-semibold text-festive-gold group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                ${status.isPhotoWindowOpen ? 'Add Proof <i class="fa-solid fa-chevron-right text-[9px]"></i>' : 'View Details <i class="fa-solid fa-chevron-right text-[9px]"></i>'}
               </span>
             </div>
           `;
         } else {
-          // LOCKED STATE
+          // Locked Upcoming Day
           innerHTML += `
-            <div class="flex items-center justify-between opacity-50 no-print">
-              <span class="font-mono text-xs font-semibold text-stone-400">Day ${task.day}</span>
-              <i class="fa-solid fa-lock text-stone-500 text-xs"></i>
+            <div class="flex items-start justify-between no-print mb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-stone-900 text-stone-400 font-mono text-xs flex items-center justify-center border border-stone-800">
+                  ${task.day}
+                </span>
+                <span class="text-xs font-medium text-stone-400">${task.dateStr}</span>
+              </div>
+              ${badgeHtml}
             </div>
-            <div class="my-6 text-center opacity-60 no-print">
+
+            <div class="my-5 text-center opacity-60 no-print">
               <div class="w-10 h-10 rounded-full mx-auto bg-stone-900 text-stone-500 flex items-center justify-center text-base mb-2">
                 <i class="fa-solid fa-lock"></i>
               </div>
-              <p class="text-xs text-stone-400 font-medium">Locked Until Dec ${task.day}</p>
-              <p class="text-[10px] text-stone-400 mt-1">Unlock via toggle above</p>
+              <p class="text-xs text-stone-300 font-medium">Locked Until ${task.dateStr}</p>
+              <p class="text-[10px] text-stone-400 mt-0.5">Unlocks at 00:00 local time</p>
             </div>
-            <div class="text-center no-print opacity-40">
-              <span class="text-[10px] text-stone-500">Wait for Day</span>
+
+            <div class="pt-2 border-t border-stone-800 text-center no-print opacity-50">
+              <span class="text-[10px] text-stone-400">Waiting for unlock date</span>
             </div>
           `;
         }
 
-        // Print Card Note preview if existing
+        // Print note view if present
         if (entry.note) {
           innerHTML += `
             <div class="print-only text-[9px] text-gray-700 italic border-t pt-1 mt-1">
@@ -969,12 +1077,12 @@
 
         card.innerHTML = innerHTML;
 
-        // Click Handler
+        // Card Click Handler
         card.addEventListener('click', () => {
-          if (unlocked) {
+          if (status.isUnlocked || isAdminBypassEnabled) {
             openDayModal(task.day);
           } else {
-            showToast(`Day ${task.day} is locked until that day arrives.`, true);
+            showToast(`Day ${task.day} unlocks on ${task.dateStr} at 00:00!`, true);
           }
         });
 
@@ -983,43 +1091,38 @@
     }
 
     /* ==========================================================================
-       PROGRESS TRACKER & REVEAL CELEBRATION
+      PROGRESS & REVEAL SHOWCASE
        ========================================================================== */
     function updateProgress() {
       let completedCount = 0;
-      for (let i = 1; i <= 18; i++) {
+      for (let i = 1; i <= 12; i++) {
         if (calendarState[i] && calendarState[i].completed) {
           completedCount++;
         }
       }
 
-      const percent = Math.round((completedCount / 18) * 100);
-      document.getElementById('progressText').textContent = `${completedCount} / 18 Completed`;
+      const percent = Math.round((completedCount / 12) * 100);
+      document.getElementById('progressText').textContent = `${completedCount} / 12 Completed`;
       document.getElementById('progressBar').style.width = `${percent}%`;
       document.getElementById('statusBadge').textContent = `${percent}% Complete`;
 
-      // Update printable info
       const printStats = document.getElementById('printCompletionStats');
       if (printStats) {
-        printStats.textContent = `${completedCount} of 18 Days Completed (${percent}%)`;
+        printStats.textContent = `${completedCount} of 12 Days Completed (${percent}%)`;
       }
 
-      checkAllRevealedState();
+      checkDay12Reveal();
     }
 
-    function checkAllRevealedState() {
+    function checkDay12Reveal() {
       const section = document.getElementById('revealCelebrationSection');
       const collage = document.getElementById('collageContainer');
-      const day18Completed = calendarState[18] && calendarState[18].completed;
+      const day12Status = getDayTimeStatus(12);
+      const isDay12Unlocked = day12Status.isUnlocked;
+      const day12Completed = calendarState[12] && calendarState[12].completed;
 
-      // Count total completed
-      let total = 0;
-      for (let i = 1; i <= 18; i++) {
-        if (calendarState[i] && calendarState[i].completed) total++;
-      }
-
-      // Show Grand Reveal if Day 18 completed or all 18 completed
-      if (day18Completed || total === 18) {
+      // Reveal if Day 12 is completed OR if Day 12 date is reached & unlocked
+      if (day12Completed || isDay12Unlocked) {
         section.classList.remove('hidden');
         buildCollage(collage);
       } else {
@@ -1031,9 +1134,9 @@
       if (!container) return;
       container.innerHTML = '';
 
-      for (let i = 1; i <= 18; i++) {
+      for (let i = 1; i <= 12; i++) {
         const item = calendarState[i];
-        const task = ADVENT_TASKS[i - 1];
+        const task = ADVENT_TASKS_12[i - 1];
         const tile = document.createElement('div');
         tile.className = "relative rounded-xl overflow-hidden aspect-square border border-festive-gold/40 bg-stone-900 group cursor-pointer shadow-md";
 
@@ -1041,21 +1144,21 @@
           tile.innerHTML = `
             <img src="${item.photo}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-1.5 opacity-90 group-hover:opacity-100">
-              <span class="text-[10px] font-bold text-festive-gold">Day ${i}</span>
+              <span class="text-[10px] font-bold text-festive-gold">Day ${i} (${task.dateStr})</span>
             </div>
           `;
         } else {
           tile.innerHTML = `
             <div class="w-full h-full flex flex-col items-center justify-center p-2 text-center bg-festive-pine/60">
               <span class="text-xs font-bold text-festive-gold">Day ${i}</span>
-              <span class="text-[10px] text-stone-400 truncate max-w-full">${task.title}</span>
-              <span class="text-[9px] text-emerald-400 mt-1">${item && item.completed ? '✓' : 'Pending'}</span>
+              <span class="text-[9.5px] text-stone-300 truncate max-w-full">${task.title}</span>
+              <span class="text-[9px] text-emerald-400 mt-1">${item && item.completed ? '✓ Done' : 'Pending'}</span>
             </div>
           `;
         }
 
         tile.addEventListener('click', () => {
-          if (isDayUnlocked(i)) openDayModal(i);
+          openDayModal(i);
         });
 
         container.appendChild(tile);
@@ -1063,63 +1166,108 @@
     }
 
     /* ==========================================================================
-       MODAL CONTROLS & PHOTO HANDLING
+      MODAL POPUP & 72-HOUR LOCKING
        ========================================================================== */
     function openDayModal(dayNumber) {
       activeDayNumber = dayNumber;
-      const task = ADVENT_TASKS.find(t => t.day === dayNumber);
+      const task = ADVENT_TASKS_12.find(t => t.day === dayNumber);
       if (!task) return;
 
       const currentEntry = calendarState[dayNumber] || { completed: false, photo: null, note: '' };
+      const status = getDayTimeStatus(dayNumber);
 
-      // Set headers
+      // Header fields
       document.getElementById('modalDayNumberBadge').textContent = `Day ${dayNumber < 10 ? '0' + dayNumber : dayNumber}`;
+      document.getElementById('modalDateLabel').textContent = `${task.dateStr} Event`;
       document.getElementById('modalCategory').textContent = task.category;
       document.getElementById('modalTaskTitle').textContent = task.title;
       document.getElementById('modalTaskDesc').textContent = task.desc;
+      document.getElementById('modalIconContainer').innerHTML = `<i class="fa-solid ${task.icon}"></i>`;
 
-      const statusEl = document.getElementById('modalDayStatus');
+      // Status Badge & Expiration Banner
+      const statusBadge = document.getElementById('modalStatusBadge');
+      const timeBanner = document.getElementById('modalTimeRemainingBanner');
+      const dropZone = document.getElementById('dropZone');
+      const expiredNotice = document.getElementById('uploadExpiredNotice');
+      const photoActionButtons = document.getElementById('photoActionButtons');
+      const photoStatusHelper = document.getElementById('photoStatusHelper');
+      const btnSave = document.getElementById('btnSaveModal');
+
       if (currentEntry.completed) {
-        statusEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> Completed Entry`;
-        statusEl.className = "text-xs font-semibold tracking-wider uppercase text-emerald-400 flex items-center gap-1";
+        statusBadge.innerHTML = `<span class="text-emerald-400"><i class="fa-solid fa-circle-check"></i> Completed Challenge</span>`;
       } else {
-        statusEl.innerHTML = `<i class="fa-solid fa-lock-open text-[10px]"></i> Unlocked Activity`;
-        statusEl.className = "text-xs font-semibold tracking-wider uppercase text-festive-gold flex items-center gap-1";
+        statusBadge.innerHTML = `<span class="text-festive-gold"><i class="fa-solid fa-unlock"></i> Open Challenge</span>`;
       }
 
-      // Populate notes & photos
-      document.getElementById('userNoteInput').value = currentEntry.note || '';
+      // Check whether photo upload is permitted:
+      // Allowed if photoWindowIsOpen OR if admin bypass is on
+      const uploadsAllowed = status.isPhotoWindowOpen || status.isBypassed;
+
+      timeBanner.classList.remove('hidden');
+      if (status.isBypassed) {
+        timeBanner.className = "mb-4 p-2.5 rounded-xl text-xs font-medium flex items-center gap-2 bg-amber-950/70 text-amber-200 border border-amber-500/40";
+        timeBanner.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Admin Bypass Active: 72h window restriction disabled.`;
+        photoStatusHelper.textContent = "Admin bypass enabled";
+      } else if (status.isPhotoWindowOpen) {
+        timeBanner.className = "mb-4 p-2.5 rounded-xl text-xs font-medium flex items-center gap-2 bg-emerald-950/70 text-emerald-200 border border-emerald-500/40";
+        timeBanner.innerHTML = `<i class="fa-regular fa-clock"></i> <strong>${status.hoursLeft} hours remaining</strong> in this day's 72-hour photo upload window.`;
+        photoStatusHelper.textContent = `${status.hoursLeft}h left to upload`;
+      } else {
+        timeBanner.className = "mb-4 p-2.5 rounded-xl text-xs font-medium flex items-center gap-2 bg-red-950/70 text-red-200 border border-red-500/40";
+        timeBanner.innerHTML = `<i class="fa-solid fa-lock text-red-400"></i> <strong>72-Hour Window Closed:</strong> Past dates lock after 72 hours. New photos cannot be submitted.`;
+        photoStatusHelper.textContent = "Window expired";
+      }
+
+      // Setup dropzone / notice display
       tempUploadedPhotoBase64 = currentEntry.photo || null;
+      document.getElementById('userNoteInput').value = currentEntry.note || '';
 
-      updatePhotoPreviewUI();
+      if (uploadsAllowed) {
+        expiredNotice.classList.add('hidden');
+        photoActionButtons.classList.remove('hidden');
+        btnSave.classList.remove('opacity-50', 'cursor-not-allowed');
+        btnSave.disabled = false;
+      } else {
+        // Expired
+        if (!tempUploadedPhotoBase64) {
+          dropZone.classList.add('hidden');
+          expiredNotice.classList.remove('hidden');
+        }
+        // If there is already a photo, display it locked without replace/remove buttons
+        photoActionButtons.classList.add('hidden');
+      }
 
-      // Show modal
+      updatePhotoPreviewUI(uploadsAllowed);
+
+      // Open Modal
       const modal = document.getElementById('dayModal');
-      const modalBox = document.getElementById('modalBox');
+      const box = document.getElementById('modalBox');
       modal.classList.remove('hidden');
       setTimeout(() => {
         modal.classList.remove('opacity-0');
-        modalBox.classList.remove('scale-95');
-        modalBox.classList.add('scale-100');
+        box.classList.remove('scale-95');
+        box.classList.add('scale-100');
       }, 10);
     }
 
     function closeDayModal() {
       const modal = document.getElementById('dayModal');
-      const modalBox = document.getElementById('modalBox');
+      const box = document.getElementById('modalBox');
       modal.classList.add('opacity-0');
-      modalBox.classList.remove('scale-100');
-      modalBox.classList.add('scale-95');
+      box.classList.remove('scale-100');
+      box.classList.add('scale-95');
       setTimeout(() => {
         modal.classList.add('hidden');
         activeDayNumber = null;
         tempUploadedPhotoBase64 = null;
-        // reset file input
         const fileInput = document.getElementById('photoFileInput');
         if (fileInput) fileInput.value = '';
       }, 250);
     }
 
+    /* ==========================================================================
+      PHOTO UPLOAD & RESIZE LOGIC
+       ========================================================================== */
     function handlePhotoUpload(event) {
       const file = event.target.files[0];
       if (file) {
@@ -1129,16 +1277,16 @@
 
     function processFile(file) {
       if (!file.type.startsWith('image/')) {
-        showToast("Please select a valid image file (JPG, PNG, WebP)", true);
+        showToast("Please select an image file (JPG, PNG, WebP)", true);
         return;
       }
 
-      // Compress/resize image with HTML5 canvas to optimize localStorage quota
+      // Compress client side with canvas for quick storage and high print quality
       const reader = new FileReader();
       reader.onload = function (readerEvent) {
         const img = new Image();
         img.onload = function () {
-          const maxDim = 900; // Good balance for crisp PDF print and compact storage
+          const maxDim = 900;
           let width = img.width;
           let height = img.height;
 
@@ -1158,9 +1306,8 @@
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
-          // Get optimized base64 string
           tempUploadedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.82);
-          updatePhotoPreviewUI();
+          updatePhotoPreviewUI(true);
           showToast("Photo proof loaded!");
         };
         img.src = readerEvent.target.result;
@@ -1169,36 +1316,59 @@
     }
 
     function removePhotoProof() {
+      const status = getDayTimeStatus(activeDayNumber);
+      if (!status.isPhotoWindowOpen && !status.isBypassed) {
+        showToast("Cannot remove photos after the 72h window has closed.", true);
+        return;
+      }
       tempUploadedPhotoBase64 = null;
       const fileInput = document.getElementById('photoFileInput');
       if (fileInput) fileInput.value = '';
-      updatePhotoPreviewUI();
+      updatePhotoPreviewUI(true);
     }
 
-    function updatePhotoPreviewUI() {
+    function updatePhotoPreviewUI(uploadsAllowed = true) {
       const dropZone = document.getElementById('dropZone');
       const previewContainer = document.getElementById('photoPreviewContainer');
       const previewImg = document.getElementById('photoPreviewImg');
+      const expiredNotice = document.getElementById('uploadExpiredNotice');
 
       if (tempUploadedPhotoBase64) {
         previewImg.src = tempUploadedPhotoBase64;
         previewContainer.classList.remove('hidden');
         dropZone.classList.add('hidden');
+        expiredNotice.classList.add('hidden');
       } else {
         previewImg.src = '';
         previewContainer.classList.add('hidden');
-        dropZone.classList.remove('hidden');
+        if (uploadsAllowed) {
+          dropZone.classList.remove('hidden');
+          expiredNotice.classList.add('hidden');
+        } else {
+          dropZone.classList.add('hidden');
+          expiredNotice.classList.remove('hidden');
+        }
       }
     }
 
     function saveDayEntry() {
       if (!activeDayNumber) return;
 
+      const status = getDayTimeStatus(activeDayNumber);
+      const uploadsAllowed = status.isPhotoWindowOpen || status.isBypassed;
+      const currentEntry = calendarState[activeDayNumber] || {};
+
+      // If the 72-hour window has expired and user had no photo, they cannot add one now
+      if (!uploadsAllowed && !currentEntry.photo && tempUploadedPhotoBase64) {
+        showToast("72-hour window has closed for this day. New photos cannot be saved.", true);
+        return;
+      }
+
       const noteText = document.getElementById('userNoteInput').value.trim();
 
       calendarState[activeDayNumber] = {
-        completed: true,
-        photo: tempUploadedPhotoBase64 || null,
+        completed: Boolean(tempUploadedPhotoBase64 || currentEntry.completed),
+        photo: tempUploadedPhotoBase64,
         note: noteText,
         updatedAt: new Date().toISOString()
       };
@@ -1207,10 +1377,10 @@
       renderCalendar();
       updateProgress();
 
-      showToast(`Day ${activeDayNumber} saved and completed! 🎉`);
+      showToast(`Day ${activeDayNumber} saved! 🎉`);
 
-      // Special Celebration on Day 18 completion
-      if (activeDayNumber === 18) {
+      // Trigger celebration if Day 12
+      if (activeDayNumber === 12) {
         triggerConfetti();
       }
 
@@ -1218,14 +1388,12 @@
     }
 
     /* ==========================================================================
-       CONFETTI & CELEBRATION
+      CELEBRATION / CONFETTI
        ========================================================================== */
     function triggerConfetti() {
       if (typeof confetti === 'function') {
         const count = 200;
-        const defaults = {
-          origin: { y: 0.7 }
-        };
+        const defaults = { origin: { y: 0.7 } };
 
         function fire(particleRatio, opts) {
           confetti(Object.assign({}, defaults, opts, {
@@ -1233,61 +1401,41 @@
           }));
         }
 
-        fire(0.25, {
-          spread: 26,
-          startVelocity: 55,
-          colors: ['#e6b85c', '#8b1e2a', '#ffffff']
-        });
-        fire(0.2, {
-          spread: 60,
-          colors: ['#2ecc71', '#f1c40f', '#e74c3c']
-        });
-        fire(0.35, {
-          spread: 100,
-          decay: 0.91,
-          scalar: 0.8
-        });
-        fire(0.1, {
-          spread: 120,
-          startVelocity: 25,
-          decay: 0.92,
-          colors: ['#e6b85c', '#ffffff']
-        });
-        fire(0.1, {
-          spread: 120,
-          startVelocity: 45,
-        });
+        fire(0.25, { spread: 26, startVelocity: 55, colors: ['#e6b85c', '#8b1e2a', '#ffffff'] });
+        fire(0.2, { spread: 60, colors: ['#2ecc71', '#f1c40f', '#e74c3c'] });
+        fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+        fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, colors: ['#e6b85c', '#ffffff'] });
+        fire(0.1, { spread: 120, startVelocity: 45 });
       }
     }
 
     /* ==========================================================================
-       PRINT TO PDF TRIGGER
+      PRINT TO PDF
        ========================================================================== */
     function triggerPrintCalendar() {
-      // Ensure all cards are clean for print
-      showToast("Preparing printable layout for PDF export...");
+      showToast("Generating 12-day printable PDF layout...");
       setTimeout(() => {
         window.print();
       }, 300);
     }
 
     /* ==========================================================================
-       SNOWFALL ANIMATION EFFECT
+      SNOWFALL EFFECT
        ========================================================================== */
     function createSnow() {
       const container = document.getElementById('snowContainer');
       const flakeChars = ['❄', '❅', '•', '·', '❆'];
-      const maxFlakes = window.innerWidth < 640 ? 25 : 55;
+      const maxFlakes = window.innerWidth < 640 ? 20 : 45;
 
       for (let i = 0; i < maxFlakes; i++) {
         const flake = document.createElement('div');
         flake.className = 'snowflake';
         flake.textContent = flakeChars[Math.floor(Math.random() * flakeChars.length)];
 
-        const size = Math.random() * 1.1 + 0.5; // rem
-        const left = Math.random() * 100; // vw
-        const duration = Math.random() * 8 + 6; // sec
-        const delay = Math.random() * 7; // sec
+        const size = Math.random() * 1.0 + 0.5;
+        const left = Math.random() * 100;
+        const duration = Math.random() * 8 + 6;
+        const delay = Math.random() * 6;
         const opacity = Math.random() * 0.7 + 0.3;
 
         flake.style.fontSize = `${size}rem`;
@@ -1302,7 +1450,7 @@
     }
 
     /* ==========================================================================
-       TOAST NOTIFICATION HELPER
+      TOAST HELPER
        ========================================================================== */
     let toastTimeout = null;
     function showToast(message, isWarning = false) {
@@ -1329,21 +1477,20 @@
     }
 
     /* ==========================================================================
-       RESET FUNCTION
+      RESET STATE
        ========================================================================== */
     function resetAllData() {
-      // Avoid browser native confirm() - custom friendly confirmation check
-      const proceed = window.confirm ? confirm("Are you sure you want to reset all 18 day photos and notes? This will clear stored progress.") : true;
+      const proceed = window.confirm ? confirm("Are you sure you want to reset all 12 days? All uploaded photos and notes will be cleared.") : true;
       if (proceed) {
         calendarState = {};
         localStorage.removeItem(STORAGE_KEY);
         renderCalendar();
         updateProgress();
-        showToast("Calendar progress reset successfully.");
+        showToast("Calendar progress reset.");
       }
     }
 
-    /* Helper: Escape HTML to avoid XSS in notes */
+    /* Helper: Escape HTML strings */
     function escapeHtml(string) {
       if (!string) return '';
       return String(string)
